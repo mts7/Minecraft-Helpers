@@ -60,7 +60,7 @@ def check_screen():
         start_screen()
 
 
-def execute(command: str) -> str:
+def execute(command: str):
     """Execute the provided command string.
 
     This executes the command and returns the value converted from bytes to string.
@@ -76,8 +76,7 @@ def execute(command: str) -> str:
         The bytes, decoded, and turned into a string.
     """
     result = subprocess.run(command, capture_output=True, text=True, shell=True).stdout
-    # convert the bytes to a string
-    return result.decode().strip()
+    return result
 
 
 def get_start_command() -> str:
@@ -108,7 +107,7 @@ def is_server_running() -> bool:
     count: bool
         The result of the comparison of count greater than zero.
     """
-    command = 'ps aux | grep ' + java_executable + ' | grep minecraft | wc -l'
+    command = 'pidof ' + java_executable + ' | wc -l'
     count = execute(command)
     return int(count) > 0
 
