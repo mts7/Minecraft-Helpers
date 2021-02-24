@@ -82,6 +82,8 @@ Check the screen name for existence and start if it does not exist.
 
 This will do the screen check and start the screen when necessary.
 
+NOTE: This appears to be broken and will need further investigation.
+
 ---
 
 ```shell
@@ -104,6 +106,7 @@ Start the server according to the compiled command string.
 
 This script first checks to see if the server is running. If it is running, the script will return void. If the server
 is not yet running, send the start command string to the specified screen. There is no return for a successful start.
+Once the command is sent, the script waits for 50 seconds before returning.
 
 ---
 

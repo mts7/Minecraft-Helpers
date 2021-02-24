@@ -244,18 +244,19 @@ if len(sys.argv) > 1:
 else:
     # display the list of available options
     options = """
-    server-actions.py by Mike Rodarte (mts7777777)
-    
-    Available Options
-    ================================================================================
-    check       Check to see if the server is running and start if not running.
-    date        Send the current date and time to all logged-in players.
-    get         Print the start server command string to the console.
-    restart     Stop and start the server.
-    screen      Check for an existing screen and start one if not open.
-    status      Check the server status.
-    start       Start the server.
-    stop        Stop the server.
-    ================================================================================
+Minecraft server-actions.py by Mike Rodarte (mts7777777)
+@since 1.16.5
+
+Available Options
+================================================================================
+check       Check to see if the server is running and start if not running.
+date        Send the current date and time to all logged-in players.
+get         Print the start server command string to the console.
+restart     Stop and start the server.
+screen      Check for an existing screen and start one if not open. [Broken]
+status      Check the server status.
+start       Start the server.
+stop        Stop the server.
+================================================================================
     """
     print(options)
