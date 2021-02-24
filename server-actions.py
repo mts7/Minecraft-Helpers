@@ -171,6 +171,9 @@ def start_screen():
     session with the same name. This is NOT safe and should only be called
     with proper validation.
 
+    This doesn't seem to be working and returns the error, "No screen session
+    found."
+
     See Also
     --------
     check_screen : The validation necessary for calling this method.
@@ -195,6 +198,10 @@ def start_server():
     send_screen_command('cd ' + server_path)
     command = get_start_command()
     send_screen_command(command)
+    # wait for the default time Minecraft server takes
+    time.sleep(20)
+    # wait for the world to load
+    time.sleep(30)
     server_starting = False
 
 
