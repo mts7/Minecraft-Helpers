@@ -54,9 +54,30 @@ def check_screen():
     currently exist. If no screen sessions exist with that name, a new screen
     session starts.
     """
-    count = subprocess.check_output('screen -ls | grep ' + screen_name + ' | wc -l')
-    if count is 0:
+    command = 'screen -ls | grep ' + screen_name + ' | wc -l'
+    count = execute(command)
+    if int(count) == 0:
         start_screen()
+
+
+def execute(command: str) -> str:
+    """Execute the provided command string.
+
+    This executes the command and returns the value converted from bytes to string.
+
+    Parameters
+    ----------
+    command : str
+        The full string command to execute.
+
+    Returns
+    -------
+    result : str
+        The bytes, decoded, and turned into a string.
+    """
+    result = subprocess.run(command, capture_output=True, text=True, shell=True).stdout
+    # convert the bytes to a string
+    return result.decode().strip()
 
 
 def get_start_command() -> str:
@@ -87,8 +108,9 @@ def is_server_running() -> bool:
     count: bool
         The result of the comparison of count greater than zero.
     """
-    count = subprocess.check_output('ps aux | grep ' + java_executable + ' | grep minecraft | wc -l', shell=True)
-    return count > 0
+    command = 'ps aux | grep ' + java_executable + ' | grep minecraft | wc -l'
+    count = execute(command)
+    return int(count) > 0
 
 
 def restart_server():
