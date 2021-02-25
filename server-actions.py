@@ -20,10 +20,6 @@ server_options = [
     '-server',
     '-Xms2048M',
     '-Xmx3072M',
-    '-XX:+UseConcMarkSweepGC',
-    '-XX:+UseParNewGC',
-    '-XX:+CMSIncrementalPacing',
-    '-XX:+UseFastAccessorMethods',
     '-XX:+AggressiveOpts',
     '-XX:+DisableExplicitGC',
     '-XX:+UseAdaptiveGCBoundary',
@@ -234,10 +230,8 @@ def start_server():
     command = get_start_command()
     send_screen_command(command)
     logger.debug('waiting for server to load...')
-    # wait for the default time Minecraft server takes
+    # wait for the server and world to load
     time.sleep(20)
-    # wait for the world to load
-    time.sleep(30)
     server_starting = False
     logger.debug('done starting server')
 
