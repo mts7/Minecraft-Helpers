@@ -15,6 +15,124 @@ python give.py
 
 Follow the prompts to see what is available.
 
+Future ideas include
+
+* Creating a command with the current selections
+* Adding an all item for enchantments
+* Adding a done option/key when finished selecting enchantments
+* Adding the selected enchantments (at maximum level) to the item
+* Naming the item
+* Providing the name of the player (or use `@p` as default)
+* Directly sending the `/give` command to the screen session (instead of displaying it)
+* Adding mutual exclusions to specific item enchantments
+* Providing an option for adding lore to the item
+* Add the option for specifying quantity (rather than defaulting to `1`)
+* Adding a blocks category
+
+---
+
+## mts_logger.py
+
+This is the logger class that logs messages to the standard output, standard error, or a file.
+
+### Usage
+
+```python
+import mts_logger
+
+# available log levels are error, warning, info, and debug
+# warning is the default log level
+logger = mts_logger.Logger('info')
+
+# log to stdout
+logger.info('This goes to stdout since there were no options.')
+
+# log to stderr
+logger.error('This goes to stderr with the default settings.')
+
+# send errors to stdout instead
+logger.use_error = False
+logger.error('This goes to stdout instead.')
+
+# configure to send all logs to stderr
+logger.output = 'error'
+logger.warning('This goes to stderr')
+
+# log to a file
+logger.output = 'file'
+logger.log_file = 'log.txt'
+logger.error('This goes to the log.txt file.')
+```
+
+When logging to stdout or stderr, colors are provided in the output. Colors do not go to files. Files are written in
+append mode rather than write mode so that the previous contents are preserved.
+
+Future ideas include
+
+* Logging to third-party services
+* Handling a second parameter that serializes to JSON
+* Logging to an external script/program
+
+#### Variables
+
+##### log_file
+
+The full path of the file used for writing. This must be combined with the `output = 'file'` option.
+
+##### message_colors
+
+This contains the 4 log modes and their corresponding colors.
+
+##### modes
+
+The list of error modes in order of revelation. See `write` for details.
+
+##### outputs
+
+This contains the allowed outputs.
+
+##### output
+
+This defaults to `out` and corresponds with one of the available keys in `outputs`.
+
+##### use_error
+
+This defaults to `True` and is used only when `output` is `out` and `error` is called. If this is `False`, `error` will
+write to `stdout`.
+
+#### Methods
+
+##### log(message)
+
+Log output using the current mode. Set the mode when instantiating the object. This is an alias for one of the other
+methods.
+
+##### debug(message)
+
+Log output with a light yellow background and black foreground.
+
+##### info(message)
+
+Log output with a light cyan foreground.
+
+##### warning(message)
+
+Log output with a light yellow foreground.
+
+##### error(message)
+
+Log output with a red foreground.
+
+##### write(level, message)
+
+Write the actual message, based on the level and output selected. This is the actual method used for writing the log
+messages and is called by the other four methods.
+
+The logger uses the log level to determine if the log message will be written. If the current mode is `warning` and the
+current log level is `debug`, the log message will not be written.
+
+---
+
 ## server-actions.py
 
 This script handles the basics for getting a Minecraft server up and running. Pass command line arguments for better
