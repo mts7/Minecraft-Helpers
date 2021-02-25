@@ -20,7 +20,6 @@ server_options = [
     '-server',
     '-Xms2048M',
     '-Xmx3072M',
-    '-XX:+AggressiveOpts',
     '-XX:+DisableExplicitGC',
     '-XX:+UseAdaptiveGCBoundary',
     '-XX:MaxGCPauseMillis=500',
@@ -231,7 +230,7 @@ def start_server():
     send_screen_command(command)
     logger.debug('waiting for server to load...')
     # wait for the server and world to load
-    time.sleep(20)
+    time.sleep(30)
     server_starting = False
     logger.debug('done starting server')
 
