@@ -9,9 +9,9 @@ from datetime import datetime
 import mts_logger
 
 # configure these variables as necessary
-screen_name = 'minecraft'
+screen_name = 'm2'
 server_path = '/home/minecraft/minecraft/'
-server_file = 'craftbukkit-1.16.5.jar'
+server_file = 'paper-1.16.5-497.jar'
 stop_timer = 30
 # this should be the path of java on the system
 java_executable = '/usr/bin/java'
@@ -19,7 +19,7 @@ java_executable = '/usr/bin/java'
 server_options = [
     '-server',
     '-Xms2048M',
-    '-Xmx5821M',
+    '-Xmx3072M',
     '-XX:+UseConcMarkSweepGC',
     '-XX:+UseParNewGC',
     '-XX:+CMSIncrementalPacing',
@@ -35,7 +35,7 @@ server_options = [
 
 # DO NOT EDIT THESE VARIABLES
 server_starting = False
-logger = mts_logger.Logger('debug')
+logger = mts_logger.Logger('info')
 logger.debug('starting the script')
 
 
