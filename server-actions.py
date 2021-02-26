@@ -364,6 +364,10 @@ class MinecraftActions:
         """
         self.logger.info('verify')
 
+        if self.screen.check() is False:
+            self.logger.warning('screen is not on')
+            return False
+
         # be sure to not try to start the server if it's already starting or on
         if self.status() is True:
             self.logger.debug('server is running')
@@ -375,10 +379,6 @@ class MinecraftActions:
 
         # the server should be running, so getting to this point is unexpected
         self.logger.warning('server is not running or starting')
-
-        if self.screen.check() is False:
-            self.logger.warning('screen is not on')
-            return False
 
         return self.start()
 
