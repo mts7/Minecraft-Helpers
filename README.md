@@ -1,6 +1,6 @@
 # Minecraft-Helpers
 
-Minecraft helper utilities written in Python
+Minecraft helper utilities written in Python 3.7+
 
 ## give.py
 

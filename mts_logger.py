@@ -146,6 +146,6 @@ class Logger:
 
             if output == 'file':
                 with open(self.log_file, 'a') as fileObject:
-                    print(message, file=fileObject)
+                    print(level + ':' + message, file=fileObject)
             else:
                 print(self.message_colors[level] + message + Style.RESET_ALL, file=output)
