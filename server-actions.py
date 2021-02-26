@@ -149,11 +149,34 @@ class MinecraftActions:
 
     def __init__(self):
         # create the logger
-        self.logger = mts_logger.Logger('debug')
+        self.logger = mts_logger.Logger('info')
 
         # get the screen
         self.screen = ScreenActions(self.screen_name)
         self.screen.logger = self.logger
+
+    def get_command_path(self, command_name: str):
+        """Gets the full path of the executable identified by the command_name.
+
+        This only works on operating systems that have the `which` command.
+
+        Parameters
+        ----------
+        command_name : str
+            The command name to lookup on Linux
+
+        Returns
+        -------
+        bool|str
+            Full path of the executable or False on failure.
+        """
+        self.logger.info('get_command_path')
+        try:
+            result = execute(f'which {command_name}')
+            return result
+        except subprocess.CalledProcessError as error:
+            self.logger.error(str(error.returncode) + ': ' + error.stdout)
+            return False
 
     def get_date(self) -> str:
         """Get the current date in a readable format.
@@ -300,7 +323,13 @@ class MinecraftActions:
             The result of the comparison of count greater than zero.
         """
         self.logger.info('status')
-        command = 'pidof ' + self.java_executable + ' | wc -l'
+
+        # cron does not know where pidof is, so get the full path
+        path_pidof = self.get_command_path('pidof')
+        if path_pidof is False:
+            return False
+
+        command = path_pidof + ' ' + self.java_executable + ' | wc -l'
         self.logger.debug('execute command: ' + command)
         try:
             count = execute(command)

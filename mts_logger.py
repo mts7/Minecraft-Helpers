@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 
 import sys
+from datetime import datetime
 
 from colorama import init, Back, Fore, Style
 
@@ -144,8 +145,10 @@ class Logger:
                     self.output = 'out'
                 output = self.outputs[self.output]
 
+            date = datetime.now().isoformat(' ', 'seconds')
             if output == 'file':
                 with open(self.log_file, 'a') as fileObject:
-                    print(level + ':' + message, file=fileObject)
+                    prefix = f'{date} {level}: '
+                    print(prefix + message, file=fileObject)
             else:
-                print(self.message_colors[level] + message + Style.RESET_ALL, file=output)
+                print(date + ' ' + self.message_colors[level] + message + Style.RESET_ALL, file=output)
