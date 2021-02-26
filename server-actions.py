@@ -325,13 +325,27 @@ class MinecraftActions:
         """
         self.logger.info('status')
 
+        find_command = None
         # cron does not know where pidof is, so get the full path
         path_pidof = self.get_command_path('pidof')
         if path_pidof is False:
             self.logger.error('could not find path of pidof')
-            raise OSError('Error determining full path of pidof, terminating.')
+        else:
+            find_command = path_pidof
 
-        command = path_pidof + ' ' + self.java_executable + ' | wc -l'
+        if find_command is None:
+            path_pgrep = self.get_command_path('pgrep')
+            if path_pgrep is False:
+                self.logger.error('could not find pgrep on the system')
+            else:
+                find_command = path_pgrep
+
+        if find_command is None:
+            raise OSError('Error determining full path of pidof and pgrep, terminating.')
+
+        self.logger.debug(f'using {find_command} to look for the file')
+
+        command = find_command + ' ' + self.java_executable + ' | wc -l'
         self.logger.debug('execute command: ' + command)
         try:
             count = execute(command)
