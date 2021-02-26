@@ -23,7 +23,8 @@ def execute(command: str):
     str
         The result of the process.
     """
-    return subprocess.run(command, capture_output=True, check=True, text=True, shell=True).stdout
+    result = subprocess.run(command, capture_output=True, check=True, text=True, shell=True).stdout
+    return result.strip()
 
 
 class ScreenActions:
@@ -148,7 +149,7 @@ class MinecraftActions:
 
     def __init__(self):
         # create the logger
-        self.logger = mts_logger.Logger('info')
+        self.logger = mts_logger.Logger('debug')
 
         # get the screen
         self.screen = ScreenActions(self.screen_name)
