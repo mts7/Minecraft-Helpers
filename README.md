@@ -38,6 +38,7 @@ This is the logger class that logs messages to the standard output, standard err
 ### Usage
 
 ```python
+
 import mts_logger
 
 # available log levels are error, warning, info, and debug
@@ -145,7 +146,7 @@ All usages print whatever is returned by the call.
 ---
 
 ```shell
-python3 server-actions.py check
+python3 server_actions.py check
 ```
 
 Check the screen name for existence.
@@ -155,7 +156,7 @@ This will only do the screen check. Start the screen session with `screen`.
 ---
 
 ```shell
-python3 server-actions.py date
+python3 server_actions.py date
 ```
 
 Send the current date and time to the players.
@@ -168,7 +169,7 @@ This can be used in a cron job as indicated below.
 ---
 
 ```shell
-python3 server-actions.py get
+python3 server_actions.py get
 ```
 
 Get the command string for starting the server.
@@ -178,7 +179,7 @@ This compiles the command string (based on the variables and configuration) and 
 ---
 
 ```shell
-python3 server-actions.py restart
+python3 server_actions.py restart
 ```
 
 Restart the server.
@@ -190,7 +191,7 @@ for `python3 server-actions.py stop && python3 server-actions.py start`.
 ---
 
 ```shell
-python3 server-actions.py screen
+python3 server_actions.py screen
 ```
 
 Start the screen with the provided name if it is not already started.
@@ -200,7 +201,7 @@ NOTE: This appears to be broken and will need further investigation.
 ---
 
 ```shell
-python3 server-actions.py status
+python3 server_actions.py status
 ```
 
 Check to see if the server is running.
@@ -212,7 +213,7 @@ It returns a Boolean value.
 ---
 
 ```shell
-python3 server-actions.py start
+python3 server_actions.py start
 ```
 
 Start the server according to the compiled command string.
@@ -224,7 +225,7 @@ Once the command is sent, the script waits for 50 seconds before returning.
 ---
 
 ```shell
-python3 server-actions.py stop
+python3 server_actions.py stop
 ```
 
 Stop the server.
@@ -234,7 +235,7 @@ This sends the stop command to the screen, which should stop the server.
 ---
 
 ```shell
-python3 server-actions.py verify
+python3 server_actions.py verify
 ```
 
 Check to see if the server is running. If the server is not running, start the server.
