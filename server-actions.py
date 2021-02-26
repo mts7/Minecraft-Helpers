@@ -7,6 +7,9 @@ from datetime import datetime
 
 import mts_logger
 
+# this is one of error, warning, info, or debug
+log_level = 'info'
+
 
 def execute(command: str):
     """Execute the provided command string.
@@ -27,6 +30,24 @@ def execute(command: str):
     return result.strip()
 
 
+def get_command_path(command_name: str):
+    """Gets the full path of the executable identified by the command_name.
+
+    This only works on operating systems that have the `which` command.
+
+    Parameters
+    ----------
+    command_name : str
+        The command name to lookup on Linux
+
+    Returns
+    -------
+    bool|str
+        Full path of the executable or False on failure.
+    """
+    return execute(f'which {command_name}')
+
+
 class ScreenActions:
     logger = None
     name = ''
@@ -34,7 +55,7 @@ class ScreenActions:
     def __init__(self, name: str):
         self.name = name
         if self.logger is None:
-            self.logger = mts_logger.Logger('info')
+            self.logger = mts_logger.Logger(log_level)
 
     def check(self) -> bool:
         """Check to see if the screen is running.
@@ -124,14 +145,107 @@ class ScreenActions:
             return False
 
 
+class StatusChecker:
+    logger = None
+
+    def __init__(self):
+        if self.logger is None:
+            self.logger = mts_logger.Logger(log_level)
+
+    def check(self, command: str) -> bool:
+        """Execute the given command and return a boolean based on the number of
+        lines returned from the command.
+
+        Parameters
+        ----------
+        command : str
+            The command to execute (without the `| wc -l`).
+
+        Returns
+        -------
+        bool
+            If the number of lines is greater than 0 or False on error.
+        """
+        try:
+            result = execute(command + ' | wc -l')
+            return int(result) > 0
+        except subprocess.CalledProcessError as error:
+            self.logger.error(str(error.returncode) + ': ' + error.stdout)
+            return False
+
+    def grep(self, command_name: str) -> bool:
+        """Check for a process existing.
+
+        This uses the ps tool with grep to determine if the given command name
+        is currently running or not. The command is sent to the check method for
+        verification.
+
+        Parameters
+        ----------
+        command_name : str
+            The command/executable name used for searching.
+
+        Returns
+        -------
+        bool
+            Is the executable running.
+        """
+        return self.check(f'ps aux | grep {command_name} | grep -v grep')
+
+    def port(self, port_number: int) -> bool:
+        """Checks for a listening port.
+
+        Use netstat to find ports and use grep to find the exact port and if it
+        is listening. The command is sent to the check method for verification.
+
+        Parameters
+        ----------
+        port_number : int
+            The port number to check.
+
+        Returns
+        -------
+        bool
+            The port is open and listening.
+        """
+        return self.check(f'netstat -ane | grep {port_number} | grep LISTEN')
+
+    def process(self, process_name: str, command_name: str) -> bool:
+        """Execute the process name with the command name and check the results.
+
+        The process name should be something that takes a single argument and is
+        its own executable file (rather than a command string). This gets the
+        full path of the process, then sends a command of that process with the
+        command name as a parameter to the check method for verification.
+
+        Parameters
+        ----------
+        process_name : str
+            The name of the executable file that checks for a running process.
+        command_name : str
+            The name of the command to find by the process.
+
+        Returns
+        -------
+        bool
+            The command is currently running (according to the process).
+        """
+        try:
+            command_path = get_command_path(process_name)
+            return self.check(f'{command_path} {command_name}')
+        except subprocess.CalledProcessError as error:
+            self.logger.error(str(error.returncode) + ': ' + error.stdout)
+
+
 class MinecraftActions:
     # configure these variables as necessary
+    minecraft_port = 25565
     screen_name = 'm2'
     server_path = '/home/minecraft/minecraft/'
     server_file = 'paper-1.16.5-497.jar'
     stop_timer = 30
     # this should be the path of java on the system
-    java_executable = '/usr/bin/java'
+    java_executable = 'java'
     # these are the options for starting the server
     server_options = [
         '-server',
@@ -149,35 +263,15 @@ class MinecraftActions:
 
     def __init__(self):
         # create the logger
-        self.logger = mts_logger.Logger('info')
+        self.logger = mts_logger.Logger(log_level)
 
         # get the screen
         self.screen = ScreenActions(self.screen_name)
         self.screen.logger = self.logger
 
-    def get_command_path(self, command_name: str):
-        """Gets the full path of the executable identified by the command_name.
-
-        This only works on operating systems that have the `which` command.
-
-        Parameters
-        ----------
-        command_name : str
-            The command name to lookup on Linux
-
-        Returns
-        -------
-        bool|str
-            Full path of the executable or False on failure.
-        """
-        self.logger.info('get_command_path')
-        try:
-            result = execute(f'which {command_name}')
-            self.logger.debug(f'{command_name} exists at {result}')
-            return result
-        except subprocess.CalledProcessError as error:
-            self.logger.error(str(error.returncode) + ': ' + error.stdout)
-            return False
+        # get the status checker
+        self.status_checker = StatusChecker()
+        self.status_checker.logger = self.logger
 
     def get_date(self) -> str:
         """Get the current date in a readable format.
@@ -205,7 +299,13 @@ class MinecraftActions:
             Full executable command to start the Minecraft server.
         """
         self.logger.info('get_start_command')
-        command = self.java_executable + ' ' + ' '.join(
+
+        path_java = get_command_path(self.java_executable)
+        if path_java is False:
+            self.logger.warning('could not find a path for java')
+            return ''
+
+        command = path_java + ' ' + ' '.join(
             self.server_options) + ' -jar ' + self.server_path + self.server_file + ' nogui'
         self.logger.debug('command is ' + command)
         return command
@@ -296,6 +396,10 @@ class MinecraftActions:
             return False
 
         command = self.get_start_command()
+        if command == '':
+            self.starting = False
+            return False
+
         result = self.screen.send(command)
         if result is False:
             self.starting = False
@@ -325,39 +429,22 @@ class MinecraftActions:
         """
         self.logger.info('status')
 
-        find_command = None
-        # cron does not know where pidof is, so get the full path
-        path_pidof = self.get_command_path('pidof')
-        if path_pidof is False:
-            self.logger.error('could not find path of pidof')
-        else:
-            find_command = path_pidof
+        # get the status from the status checker
+        status = {
+            'pidof': self.status_checker.process('pidof', self.java_executable),
+            'pgrep': self.status_checker.process('pgrep', self.java_executable),
+            'port': self.status_checker.port(self.minecraft_port),
+            'ps': self.status_checker.grep(self.java_executable)
+        }
 
-        if find_command is None:
-            path_pgrep = self.get_command_path('pgrep')
-            if path_pgrep is False:
-                self.logger.error('could not find pgrep on the system')
-            else:
-                find_command = path_pgrep
-
-        if find_command is None:
-            raise OSError('Error determining full path of pidof and pgrep, terminating.')
-
-        self.logger.debug(f'using {find_command} to look for the file')
-
-        command = find_command + ' ' + self.java_executable + ' | wc -l'
-        self.logger.debug('execute command: ' + command)
-        try:
-            count = execute(command)
-            self.logger.debug('count from execute is ' + count)
-            try:
-                return int(count) > 0
-            except ValueError as error:
-                self.logger.error(str(error))
-                return False
-        except subprocess.CalledProcessError as error:
-            self.logger.error(str(error.returncode) + ': ' + error.stdout)
-            return False
+        # if any of the statuses are True, return True
+        result = False
+        for key in status:
+            if status[key]:
+                result = True
+                self.logger.debug(f'found a true result in {key}')
+                break
+        return result
 
     def stop(self) -> bool:
         """Stop the Minecraft server.
