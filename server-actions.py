@@ -173,6 +173,7 @@ class MinecraftActions:
         self.logger.info('get_command_path')
         try:
             result = execute(f'which {command_name}')
+            self.logger.debug(f'{command_name} exists at {result}')
             return result
         except subprocess.CalledProcessError as error:
             self.logger.error(str(error.returncode) + ': ' + error.stdout)
@@ -327,7 +328,8 @@ class MinecraftActions:
         # cron does not know where pidof is, so get the full path
         path_pidof = self.get_command_path('pidof')
         if path_pidof is False:
-            return False
+            self.logger.error('could not find path of pidof')
+            raise OSError('Error determining full path of pidof, terminating.')
 
         command = path_pidof + ' ' + self.java_executable + ' | wc -l'
         self.logger.debug('execute command: ' + command)
