@@ -365,8 +365,12 @@ class MinecraftActions:
         self.logger.info('verify')
 
         # be sure to not try to start the server if it's already starting or on
-        if self.status() is True or self.starting is True:
-            self.logger.debug('server is running or server starting is true')
+        if self.status() is True:
+            self.logger.debug('server is running')
+            return True
+
+        if self.starting is True:
+            self.logger.debug('server is starting')
             return True
 
         # the server should be running, so getting to this point is unexpected
