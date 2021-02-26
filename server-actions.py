@@ -146,13 +146,9 @@ class ScreenActions:
 
 
 class StatusChecker:
-    logger = None
+    valid = False
 
-    def __init__(self):
-        if self.logger is None:
-            self.logger = mts_logger.Logger(log_level)
-
-    def check(self, command: str) -> bool:
+    def check(self, command: str):
         """Execute the given command and return a boolean based on the number of
         lines returned from the command.
 
@@ -163,15 +159,17 @@ class StatusChecker:
 
         Returns
         -------
-        bool
-            If the number of lines is greater than 0 or False on error.
+        bool|CalledProcessError
+            If the number of lines is greater than 0 or an error.
         """
         try:
-            result = execute(command + ' | wc -l')
-            return int(result) > 0
+            count = execute(command + ' | wc -l')
+            result = int(count) > 0
+            if result:
+                self.valid = True
+            return result
         except subprocess.CalledProcessError as error:
-            self.logger.error(str(error.returncode) + ': ' + error.stdout)
-            return False
+            return error
 
     def grep(self, command_name: str) -> bool:
         """Check for a process existing.
@@ -210,7 +208,7 @@ class StatusChecker:
         """
         return self.check(f'netstat -ane | grep {port_number} | grep LISTEN')
 
-    def process(self, process_name: str, command_name: str) -> bool:
+    def process(self, process_name: str, command_name: str):
         """Execute the process name with the command name and check the results.
 
         The process name should be something that takes a single argument and is
@@ -227,14 +225,14 @@ class StatusChecker:
 
         Returns
         -------
-        bool
-            The command is currently running (according to the process).
+        bool|CalledProcessError
+            The command is currently running or an error.
         """
         try:
             command_path = get_command_path(process_name)
             return self.check(f'{command_path} {command_name}')
         except subprocess.CalledProcessError as error:
-            self.logger.error(str(error.returncode) + ': ' + error.stdout)
+            return error
 
 
 class MinecraftActions:
@@ -429,6 +427,9 @@ class MinecraftActions:
         """
         self.logger.info('status')
 
+        # reset valid before checking
+        self.status_checker.valid = False
+
         # get the status from the status checker
         status = {
             'pidof': self.status_checker.process('pidof', self.java_executable),
@@ -436,15 +437,13 @@ class MinecraftActions:
             'port': self.status_checker.port(self.minecraft_port),
             'ps': self.status_checker.grep(self.java_executable)
         }
+        # this is only for logging/debugging purposes
+        if log_level == 'debug':
+            for key in status:
+                self.logger.debug(f'{key} status is {status[key]}')
 
-        # if any of the statuses are True, return True
-        result = False
-        for key in status:
-            if status[key]:
-                result = True
-                self.logger.debug(f'found a true result in {key}')
-                break
-        return result
+        # if any of them are True, valid will be True
+        return self.status_checker.valid
 
     def stop(self) -> bool:
         """Stop the Minecraft server.
