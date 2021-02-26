@@ -10,7 +10,7 @@ give. It will soon have the ability to add enchantments to the item, then give t
 ### Usage
 
 ```shell
-python give.py
+python3 give.py
 ```
 
 Follow the prompts to see what is available.
@@ -145,20 +145,17 @@ All usages print whatever is returned by the call.
 ---
 
 ```shell
-python server-actions.py check
+python3 server-actions.py check
 ```
 
-Check to see if the server is running. If the server is not running, start the server.
+Check the screen name for existence.
 
-This script is useful for cron jobs to ensure the server is up and running at the desired interval. The line below will
-run the check every fifteen minutes.
-
-`*/15 * * * * python server-actions.py check > /dev/null`
+This will only do the screen check. Start the screen session with `screen`.
 
 ---
 
 ```shell
-python server-actions.py date
+python3 server-actions.py date
 ```
 
 Send the current date and time to the players.
@@ -166,12 +163,12 @@ Send the current date and time to the players.
 This is useful for alerting players of the time in case of playing for hours with no real sense of the current time.
 This can be used in a cron job as indicated below.
 
-`*/30 * * * * python server-actions.py date > /dev/null`
+`*/30 * * * * python3 server-actions.py date > /dev/null`
 
 ---
 
 ```shell
-python server-actions.py get
+python3 server-actions.py get
 ```
 
 Get the command string for starting the server.
@@ -181,31 +178,29 @@ This compiles the command string (based on the variables and configuration) and 
 ---
 
 ```shell
-python server-actions.py restart
+python3 server-actions.py restart
 ```
 
 Restart the server.
 
 This script calls the stop action (which waits for the provided number of seconds)
 and then it calls the start action. This is merely a shortcut
-for `python server-actions.py stop && python server-actions.py start`.
+for `python3 server-actions.py stop && python3 server-actions.py start`.
 
 ---
 
 ```shell
-python server-actions.py screen
+python3 server-actions.py screen
 ```
 
-Check the screen name for existence and start if it does not exist.
-
-This will do the screen check and start the screen when necessary.
+Start the screen with the provided name if it is not already started.
 
 NOTE: This appears to be broken and will need further investigation.
 
 ---
 
 ```shell
-python server-actions.py status
+python3 server-actions.py status
 ```
 
 Check to see if the server is running.
@@ -217,7 +212,7 @@ It returns a Boolean value.
 ---
 
 ```shell
-python server-actions.py start
+python3 server-actions.py start
 ```
 
 Start the server according to the compiled command string.
@@ -229,9 +224,22 @@ Once the command is sent, the script waits for 50 seconds before returning.
 ---
 
 ```shell
-python server-actions.py stop
+python3 server-actions.py stop
 ```
 
 Stop the server.
 
 This sends the stop command to the screen, which should stop the server.
+
+---
+
+```shell
+python3 server-actions.py verify
+```
+
+Check to see if the server is running. If the server is not running, start the server.
+
+This script is useful for cron jobs to ensure the server is up and running at the desired interval. The line below will
+run the check every fifteen minutes.
+
+`*/15 * * * * python3 server-actions.py verify > /dev/null`
