@@ -267,11 +267,13 @@ class MinecraftActions:
         self.logger.debug('changing directory to ' + self.server_path)
         result = self.screen.send('cd ' + self.server_path)
         if result is False:
+            self.starting = False
             return False
 
         command = self.get_start_command()
         result = self.screen.send(command)
         if result is False:
+            self.starting = False
             return False
 
         # TODO: poll the screen to determine if the server is done
