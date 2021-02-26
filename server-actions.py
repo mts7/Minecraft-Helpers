@@ -194,6 +194,8 @@ class MinecraftActions:
         self.logger.info('restart')
         stopped = self.stop()
         if stopped:
+            self.logger.debug('waiting to give status a chance to catch up')
+            time.sleep(5)
             started = self.start()
             if started is False:
                 self.logger.warning('failed to start the server')
