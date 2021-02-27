@@ -1,6 +1,6 @@
 import subprocess
 
-from mts_helpers import execute, get_command_path
+from .mts_helpers import execute, get_command_path
 
 
 class StatusChecker:

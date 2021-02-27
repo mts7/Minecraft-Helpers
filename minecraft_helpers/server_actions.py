@@ -1,146 +1,37 @@
-#!/usr/local/bin/python3
-
 import subprocess
-import sys
 import time
 from datetime import datetime
 
-import mts_logger
-from mts_helpers import execute, get_command_path
-from mts_status import StatusChecker
+from mts_utilities import mts_logger
+from mts_utilities.mts_helpers import get_command_path
+from mts_utilities.mts_screen import ScreenActions
+from mts_utilities.mts_status import StatusChecker
 
 # this is one of error, warning, info, or debug
 log_level = 'info'
 
 
-class ScreenActions:
-    logger = None
-    name = ''
-
-    def __init__(self, name: str):
-        self.name = name
-        if self.logger is None:
-            self.logger = mts_logger.Logger(log_level)
-
-    def check(self) -> bool:
-        """Check to see if the screen is running.
-
-        This determines if there is at least one screen running with the given
-        name.
-
-        Returns
-        -------
-        bool
-            Whether the screen is running or not.
-        """
-        self.logger.info('check')
-        command = 'screen -ls | grep ' + self.name + ' | wc -l'
-        self.logger.debug('execute command: ' + command)
-        try:
-            count = execute(command)
-            try:
-                return int(count) > 0
-            except ValueError as error:
-                self.logger.error(str(error))
-                return False
-        except subprocess.CalledProcessError as error:
-            self.logger.error(str(error.returncode) + ': ' + error.stdout)
-            return False
-
-    def create(self) -> bool:
-        """Start the screen session.
-
-        Start the screen session, regardless of if there is an existing screen
-        session with the same name. This is safe and has proper validation.
-
-        This doesn't seem to be working and returns the error, "No screen session
-        found."
-
-        Returns
-        -------
-        bool
-            Is the screen on.
-
-        See Also
-        --------
-        check_screen : The validation necessary for calling this method.
-        """
-        self.logger.info('create')
-        if self.check() is True:
-            self.logger.debug('screen is already on')
-            return True
-
-        self.logger.debug('starting screen')
-        try:
-            value = execute('screen -dmS ' + self.name)
-            self.logger.debug('value from execute: ' + value)
-            self.logger.debug('screen ' + self.name + ' should be running')
-            return True
-        except subprocess.CalledProcessError as error:
-            self.logger.error(str(error.returncode) + ': ' + error.stdout)
-            return False
-
-    def send(self, command: str):
-        """Send the provided command to the screen.
-
-        This checks for the screen to exist and then directly sends the given
-        parameter to the screen using the global variable for screen name. This
-        method cannot be called with command line parameters.
-
-        Parameters
-        ----------
-        command : str
-            Command to send to the screen.
-
-        Returns
-        -------
-        bool|str
-            Result of execute or False.
-        """
-        self.logger.info('send(' + command + ')')
-        if self.check() is False:
-            self.logger.warning(f'screen {self.name} does not exist.')
-            return False
-
-        self.logger.debug('sending command to screen ' + self.name)
-        try:
-            return execute('screen -dR ' + self.name + ' -X stuff "' + command + '"\015')
-        except subprocess.CalledProcessError as error:
-            self.logger.error(str(error.returncode) + ': ' + error.stdout)
-            return False
-
-
 class MinecraftActions:
-    # configure these variables as necessary
-    minecraft_port = 25565
-    screen_name = 'm2'
-    server_path = '/home/minecraft/minecraft/'
-    server_file = 'paper-1.16.5-497.jar'
-    stop_timer = 30
-    # this should be the path of java on the system
-    java_executable = 'java'
-    # these are the options for starting the server
-    server_options = [
-        '-server',
-        '-Xms2048M',
-        '-Xmx3072M',
-        '-XX:+DisableExplicitGC',
-        '-XX:+UseAdaptiveGCBoundary',
-        '-XX:MaxGCPauseMillis=500',
-        '-XX:SurvivorRatio=16',
-        '-XX:UseSSE=3',
-        '-XX:ParallelGCThreads=2'
-    ]
     # do not configure below this line
     starting = False
 
-    def __init__(self):
+    def __init__(self, minecraft_port=25565, screen_name='minecraft',
+                 server_path='/usr/games/minecraft',
+                 server_file='minecraft_server.jar', stop_timer=30,
+                 java_executable='/bin/java', server_options=[]):
         # create the logger
         self.logger = mts_logger.Logger(log_level)
 
+        # set the instance properties from the keyword arguments
+        self.minecraft_port = minecraft_port
+        self.server_options = server_options
+        self.server_path = server_path
+        self.server_file = server_file
+        self.stop_timer = stop_timer
+        self.java_executable = java_executable
+
         # get the screen
-        self.screen = ScreenActions(self.screen_name)
-        self.screen.logger = self.logger
+        self.screen = ScreenActions(name=screen_name, logger=self.logger)
 
         # get the status checker
         self.status_checker = StatusChecker()
@@ -249,6 +140,10 @@ class MinecraftActions:
         """
         self.logger.info('start')
 
+        if self.screen.check() is False:
+            self.logger.warning('screen is not on')
+            return False
+
         if self.status():
             self.logger.debug('server is already running')
             return True
@@ -256,10 +151,6 @@ class MinecraftActions:
         if self.starting:
             self.logger.debug('server is starting')
             return True
-
-        if self.screen.check() is False:
-            self.logger.warning('screen is not on')
-            return False
 
         self.starting = True
 
@@ -391,47 +282,3 @@ class MinecraftActions:
         self.logger.warning('server is not running or starting')
 
         return self.start()
-
-
-minecraft_server = MinecraftActions()
-
-# get any command line arguments
-if len(sys.argv) > 1:
-    action = sys.argv[1]
-
-    # determine which function to call
-    switcher = {
-        'check': minecraft_server.screen.check,
-        'date': minecraft_server.send_date,
-        'get': minecraft_server.get_start_command,
-        'restart': minecraft_server.restart,
-        'screen': minecraft_server.screen.create,
-        'start': minecraft_server.start,
-        'status': minecraft_server.status,
-        'stop': minecraft_server.stop,
-        'verify': minecraft_server.verify,
-    }
-
-    function_to_call = switcher.get(action, minecraft_server.get_start_command)
-    output = function_to_call()
-    print(output)
-else:
-    # display the list of available options
-    options = """
-Minecraft server_actions.py by Mike Rodarte (mts7777777)
-@since 1.16.5
-
-Available Options
-================================================================================
-check       Check for an existing screen.
-date        Send the current date and time to the screen.
-get         Print the start server command string to the console.
-restart     Stop and start the server.
-screen      Create a new screen.
-status      Check the server status.
-start       Start the server.
-stop        Stop the server.
-verify      Check to see if the server is running and start if not running.
-================================================================================
-"""
-    print(options)

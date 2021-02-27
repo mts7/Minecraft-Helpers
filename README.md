@@ -39,7 +39,7 @@ This is the logger class that logs messages to the standard output, standard err
 
 ```python
 
-import mts_logger
+from mts_utilities import mts_logger
 
 # available log levels are error, warning, info, and debug
 # warning is the default log level
@@ -134,7 +134,7 @@ current log level is `debug`, the log message will not be written.
 
 ---
 
-## server-actions.py
+## server_actions.py
 
 This script handles the basics for getting a Minecraft server up and running. Pass command line arguments for better
 handling of the actions. To facilitate better handling, this sends all commands to the specified screen.

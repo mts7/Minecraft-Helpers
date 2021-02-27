@@ -1,3 +1,4 @@
+import platform
 import subprocess
 
 
@@ -35,4 +36,5 @@ def get_command_path(command_name: str):
     bool|str
         Full path of the executable or False on failure.
     """
-    return execute(f'which {command_name}')
+    locator = 'where' if platform.system() == 'Windows' else 'which'
+    return execute(f'{locator} {command_name}')
