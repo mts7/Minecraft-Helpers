@@ -48,23 +48,27 @@ class StatusChecker:
         """
         return self.check(f'ps aux | grep {command_name} | grep -v grep')
 
-    def port(self, port_number: int) -> bool:
-        """Checks for a listening port.
+    def port(self, port_numbers: list) -> dict:
+        """Checks for listening ports.
 
         Use netstat to find ports and use grep to find the exact port and if it
         is listening. The command is sent to the check method for verification.
 
         Parameters
         ----------
-        port_number : int
-            The port number to check.
+        port_numbers : list
+            The port numbers to check.
 
         Returns
         -------
-        bool
-            The port is open and listening.
+        output : dict
+            The dictionary with port number and the result.
         """
-        return self.check(f'netstat -ane | grep {port_number} | grep LISTEN')
+        output = {}
+        for port_number in port_numbers:
+            result = self.check(f'netstat -ane | grep {port_number} | grep LISTEN')
+            output['port ' + str(port_number)] = result
+        return output
 
     def process(self, process_name: str, command_name: str):
         """Execute the process name with the command name and check the results.

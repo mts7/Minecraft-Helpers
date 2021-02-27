@@ -15,15 +15,19 @@ class MinecraftActions:
     # do not configure below this line
     starting = False
 
-    def __init__(self, minecraft_port=25565, screen_name='minecraft',
+    def __init__(self, screen_name='minecraft',
                  server_path='/usr/games/minecraft',
                  server_file='minecraft_server.jar', stop_timer=30,
-                 java_executable='/bin/java', server_options=[]):
+                 java_executable='/bin/java', server_options=None, ports=None):
+        if ports is None:
+            ports = []
+        if server_options is None:
+            server_options = []
         # create the logger
         self.logger = mts_logger.Logger(log_level)
 
         # set the instance properties from the keyword arguments
-        self.minecraft_port = minecraft_port
+        self.ports = ports if len(ports) > 0 else [25565]
         self.server_options = server_options
         self.server_path = server_path
         self.server_file = server_file
@@ -201,7 +205,7 @@ class MinecraftActions:
         status = {
             'pidof': self.status_checker.process('pidof', self.java_executable),
             'pgrep': self.status_checker.process('pgrep', self.java_executable),
-            'port': self.status_checker.port(self.minecraft_port),
+            **(self.status_checker.port(self.ports)),
             'ps': self.status_checker.grep(self.java_executable)
         }
         # this is only for logging/debugging purposes

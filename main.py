@@ -12,6 +12,7 @@ giver = give.Give(screen_name)
 # configure these variables for the Minecraft server
 config = {
     'java_executable': 'java',
+    'ports': [25565, 8123],
     'screen_name': screen_name,
     'server_path': '/home/minecraft/minecraft/',
     'server_file': 'paper-1.16.5-497.jar',
