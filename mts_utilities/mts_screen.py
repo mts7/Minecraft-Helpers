@@ -13,6 +13,8 @@ class ScreenActions:
         self.name = name
         if logger is None:
             self.logger = mts_logger.Logger(log_level)
+        else:
+            self.logger = logger
 
     def check(self) -> bool:
         """Check to see if the screen is running.
