@@ -3,7 +3,7 @@ import json
 import os
 
 from dotenv import load_dotenv
-from flask import Response
+from flask import Response, request
 
 from api import http_codes
 from minecraft_helpers.server_actions import MinecraftActions
@@ -145,8 +145,15 @@ class ApiHandler:
         caller_frame = inspect.getouterframes(current_frame, 2)
         caller = caller_frame[1][3]
 
+        # get the IP address
+        other = request.headers.getlist('X-Forwarded-For')
+        if len(other) > 0:
+            ip = ', '.join(other)
+        else:
+            ip = request.remote_addr
+
         # log the response
-        self.logger.info(f'{caller}: Sending API Response, {message}, with code {code}.')
+        self.logger.info(f'{ip} - {caller}: Sending API Response, {message}, with code {code}.')
 
         # return the response with the code
         return Response(message, code)
