@@ -18,12 +18,6 @@ class Logger:
     ```
     """
 
-    # these are the variables that should be set when instantiated
-    log_file = ''
-    # the default output is the system stdout/stderr
-    output = 'out'
-    use_error = True
-
     # these are the variables that are better off left alone
     message_colors = {
         'error': Fore.RED,
@@ -38,7 +32,7 @@ class Logger:
         'out': sys.stdout
     }
 
-    def __init__(self, mode='warning'):
+    def __init__(self, mode='warning', output='out', log_file='', use_error=True):
         """Initialize the object with the desired mode.
 
         Mode can be any of the values as seen in the `modes` variable.
@@ -47,11 +41,23 @@ class Logger:
         ----------
         mode : str
             The default value is warning so that error and warning are displayed.
+        log_file : str
+            The file path and name to use for writing.
+        output : str
+            The output method (as indexed in outputs).
+        use_error : bool
+            Whether the messages should go to stderr or stdout when out is the output value.
         """
         if mode in self.modes:
             self.mode = mode
         else:
             self.mode = 'warning'
+
+        if log_file != '':
+            self.log_file = log_file
+
+        self.output = output
+        self.use_error = use_error
 
     def log(self, message: str):
         """Log a message with the current log level.
@@ -72,6 +78,7 @@ class Logger:
         }
 
         function_to_call = switcher.get(self.mode, self.info)
+        # noinspection PyArgumentList
         function_to_call(message)
 
     def debug(self, message: str):

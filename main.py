@@ -1,33 +1,30 @@
+import json
+import os
 import sys
+
+from dotenv import load_dotenv
 
 import minecraft_helpers.give as give
 from minecraft_helpers.server_actions import MinecraftActions
 
+load_dotenv()
+
 # set the name of the screen
-screen_name = 'm2'
+screen_name = os.environ.get('SCREEN_NAME')
 
 # start the giver
 giver = give.Give(screen_name)
 
 # configure these variables for the Minecraft server
 config = {
-    'java_executable': 'java',
-    'ports': [25565, 8123],
+    'java_executable': os.environ.get('JAVA_EXECUTABLE'),
+    'log_level': 'debug' if os.environ.get('ENVIRONMENT') == 'development' else 'warning',
+    'ports': json.loads(os.environ.get('PORTS')),
     'screen_name': screen_name,
-    'server_path': '/home/minecraft/minecraft/',
-    'server_file': 'paper-1.16.5-497.jar',
-    'stop_timer': 30,
-    'server_options': [
-        '-server',
-        '-Xms2048M',
-        '-Xmx3072M',
-        '-XX:+DisableExplicitGC',
-        '-XX:+UseAdaptiveGCBoundary',
-        '-XX:MaxGCPauseMillis=500',
-        '-XX:SurvivorRatio=16',
-        '-XX:UseSSE=3',
-        '-XX:ParallelGCThreads=2'
-    ]
+    'server_file': os.environ.get('SERVER_FILE'),
+    'server_path': os.environ.get('SERVER_PATH'),
+    'stop_timer': os.environ.get('STOP_TIMER'),
+    'server_options': json.loads(os.environ.get('SERVER_OPTIONS'))
 }
 minecraft_server = MinecraftActions(**config)
 

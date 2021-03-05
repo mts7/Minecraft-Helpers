@@ -7,15 +7,12 @@ from mts_utilities.mts_helpers import get_command_path
 from mts_utilities.mts_screen import ScreenActions
 from mts_utilities.mts_status import StatusChecker
 
-# this is one of error, warning, info, or debug
-log_level = 'info'
-
 
 class MinecraftActions:
     # do not configure below this line
     starting = False
 
-    def __init__(self, screen_name='minecraft',
+    def __init__(self, screen_name='minecraft', log_level='info',
                  server_path='/usr/games/minecraft',
                  server_file='minecraft_server.jar', stop_timer=30,
                  java_executable='/bin/java', server_options=None, ports=None):
@@ -79,11 +76,16 @@ class MinecraftActions:
         self.logger.debug('command is ' + command)
         return command
 
-    def restart(self):
+    def restart(self) -> bool:
         """Restart the server by calling stop and then start.
 
         This is an alias for calling both stop and start. Since both stop and start
         have their own checks, this is safe to call without any other validation.
+
+        Returns
+        -------
+        bool
+            Stopped and started results
         """
         self.logger.info('restart')
         stopped = self.stop()
@@ -97,6 +99,8 @@ class MinecraftActions:
                 self.logger.debug('done restarting')
         else:
             self.logger.warning('failed to stop the server')
+            started = False
+        return stopped and started
 
     def send_date(self):
         """Send the current date and time to all logged-in players.
@@ -209,7 +213,7 @@ class MinecraftActions:
             'ps': self.status_checker.grep(self.java_executable)
         }
         # this is only for logging/debugging purposes
-        if log_level == 'debug':
+        if self.logger.mode == 'debug':
             for key in status:
                 self.logger.debug(f'{key} status is {status[key]}')
 
