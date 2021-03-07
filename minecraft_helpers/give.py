@@ -10,8 +10,8 @@ class Give:
     categories = ['weapon', 'armor', 'tools', 'other']
     weapons = ['sword', 'bow', 'crossbow', 'trident']
     head = ['helmet', 'turtle_shell']
-    armor = [*head, 'chestplate', 'pants', 'boots']
-    tools = ['pickaxe', 'shovel', 'axe']
+    armor = [*head, 'chestplate', 'leggings', 'boots']
+    tools = ['pickaxe', 'shovel', 'axe', 'hoe', 'shears']
     extra = ['elytra', 'shield', 'fishing_rod']
     all_items = [*armor, *tools, *weapons, *extra]
     pointy_items = ['sword', 'axe']
@@ -43,7 +43,7 @@ class Give:
         'Curse of Binding': {
             'id': 'binding_curse',
             'lvl': '1',
-            'items': all_items,
+            'items': armor,
         },
         'Curse of Vanishing': {
             'id': 'vanishing_curse',
@@ -266,7 +266,11 @@ class Give:
             print('{}: {}'.format(index, value))
 
         value_input = input('Which would you like? ')
-        self.last_selected = values[int(value_input) - 1]
+        try:
+            self.last_selected = values[int(value_input) - 1]
+        except ValueError:
+            print('exiting')
+            exit(0)
 
     def list_enchantments(self, item):
         show_enchantments = []
