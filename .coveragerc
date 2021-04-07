@@ -1,0 +1,13 @@
+[run]
+branch = True
+omit =
+    tests/*
+    setup.py
+    *__init__.py*
+source = .
+
+[report]
+show_missing = True
+
+[json]
+pretty_print = True

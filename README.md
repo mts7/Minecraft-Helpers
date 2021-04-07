@@ -10,7 +10,7 @@ give. It will soon have the ability to add enchantments to the item, then give t
 ### Usage
 
 ```shell
-python3 give.py
+python3 src/main.py give
 ```
 
 Follow the prompts to see what is available.
@@ -39,7 +39,7 @@ This is the logger class that logs messages to the standard output, standard err
 
 ```python
 
-from mts_utilities import mts_logger
+from src.mts_utilities import mts_logger
 
 # available log levels are error, warning, info, and debug
 # warning is the default log level
@@ -146,7 +146,7 @@ All usages print whatever is returned by the call.
 ---
 
 ```shell
-python3 server_actions.py check
+python3 src/main.py check
 ```
 
 Check the screen name for existence.
@@ -156,7 +156,7 @@ This will only do the screen check. Start the screen session with `screen`.
 ---
 
 ```shell
-python3 server_actions.py date
+python3 src/main.py date
 ```
 
 Send the current date and time to the players.
@@ -169,7 +169,7 @@ This can be used in a cron job as indicated below.
 ---
 
 ```shell
-python3 server_actions.py get
+python3 src/main.py get
 ```
 
 Get the command string for starting the server.
@@ -179,7 +179,7 @@ This compiles the command string (based on the variables and configuration) and 
 ---
 
 ```shell
-python3 server_actions.py restart
+python3 src/main.py restart
 ```
 
 Restart the server.
@@ -191,7 +191,7 @@ for `python3 server-actions.py stop && python3 server-actions.py start`.
 ---
 
 ```shell
-python3 server_actions.py screen
+python3 src/main.py screen
 ```
 
 Start the screen with the provided name if it is not already started.
@@ -201,7 +201,7 @@ NOTE: This appears to be broken and will need further investigation.
 ---
 
 ```shell
-python3 server_actions.py status
+python3 src/main.py status
 ```
 
 Check to see if the server is running.
@@ -213,7 +213,7 @@ It returns a Boolean value.
 ---
 
 ```shell
-python3 server_actions.py start
+python3 src/main.py start
 ```
 
 Start the server according to the compiled command string.
@@ -225,7 +225,7 @@ Once the command is sent, the script waits for 50 seconds before returning.
 ---
 
 ```shell
-python3 server_actions.py stop
+python3 src/main.py stop
 ```
 
 Stop the server.
@@ -235,7 +235,7 @@ This sends the stop command to the screen, which should stop the server.
 ---
 
 ```shell
-python3 server_actions.py verify
+python3 src/main.py verify
 ```
 
 Check to see if the server is running. If the server is not running, start the server.
@@ -243,4 +243,40 @@ Check to see if the server is running. If the server is not running, start the s
 This script is useful for cron jobs to ensure the server is up and running at the desired interval. The line below will
 run the check every fifteen minutes.
 
-`*/15 * * * * python3 server-actions.py verify > /dev/null`
+`*/15 * * * * python3 src/main.py verify > /dev/null`
+
+## Flask API with wsgi
+
+The API works pretty much like the CLI, even with the same commands (endpoints).
+
+### Usage
+
+```shell
+python3 src/wsgi.py
+```
+
+Get the status of the server.
+
+```
+http://127.0.0.1:5000/api/status
+```
+
+#### Routes
+
+* /api/check
+* /api/date
+* /api/command
+* /api/restart
+* /api/create
+* /api/start
+* /api/status
+* /api/stop
+
+Each of the above routes executes the provided command and does not take any arguments.
+
+## TODO
+
+1. separate out mts_logger
+1. add tests
+1. add authentication to the API endpoints
+1. build an executable package for pip

@@ -1,7 +1,7 @@
 import subprocess
 
-import mts_utilities.mts_logger as mts_logger
-from mts_utilities.mts_helpers import execute
+from .mts_helpers import execute
+from .mts_logger import Logger
 
 log_level = 'info'
 
@@ -12,7 +12,7 @@ class ScreenActions:
     def __init__(self, name: str, logger=None):
         self.name = name
         if logger is None:
-            self.logger = mts_logger.Logger(log_level)
+            self.logger = Logger(log_level)
         else:
             self.logger = logger
 

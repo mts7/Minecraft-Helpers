@@ -2,10 +2,9 @@ import inspect
 import json
 import os
 
+from api import http_codes
 from dotenv import load_dotenv
 from flask import Response, request
-
-from api import http_codes
 from minecraft_helpers.server_actions import MinecraftActions
 from mts_utilities import mts_logger
 
@@ -35,7 +34,7 @@ class ApiHandler:
         # create the logger
         self.logger = mts_logger.Logger(mode=log_level, log_file='api.log', output='file')
 
-    def check(self):
+    def check(self) -> Response:
         """Check if the screen is on or off.
 
         Returns
@@ -46,7 +45,7 @@ class ApiHandler:
         result = minecraft_server.screen.check()
         return self.respond('on' if result else 'off')
 
-    def date(self):
+    def date(self) -> Response:
         """Get and send the date to the screen session.
 
         Returns
@@ -56,7 +55,7 @@ class ApiHandler:
         """
         return self.respond(minecraft_server.send_date())
 
-    def command(self):
+    def command(self) -> Response:
         """Get the server command.
 
         Returns
@@ -66,7 +65,7 @@ class ApiHandler:
         """
         return self.respond(minecraft_server.get_start_command())
 
-    def create(self):
+    def create(self) -> Response:
         """Create the screen session.
 
         Returns
@@ -79,7 +78,7 @@ class ApiHandler:
             return self.respond('Created screen', http_codes.NO_CONTENT)
         return self.respond('Failed to create screen', http_codes.SERVICE_UNAVAILABLE)
 
-    def restart(self):
+    def restart(self) -> Response:
         """Restart the server.
 
         This returns the combined results from stop and start. While there might be a failed restart value, the server
@@ -95,7 +94,7 @@ class ApiHandler:
             return self.respond('Restarted successfully', http_codes.NO_CONTENT)
         return self.respond('Failed to restart successfully', http_codes.CONFLICT)
 
-    def start(self):
+    def start(self) -> Response:
         """Start the server.
 
         Returns
@@ -108,7 +107,7 @@ class ApiHandler:
             return self.respond('Started successfully', http_codes.NO_CONTENT)
         return self.respond('Failed to start', http_codes.CONFLICT)
 
-    def status(self):
+    def status(self) -> Response:
         """Get the status of the server.
 
         Returns
@@ -119,7 +118,7 @@ class ApiHandler:
         result = minecraft_server.status()
         return self.respond('up' if result else 'down')
 
-    def stop(self):
+    def stop(self) -> Response:
         """Stop the server.
 
         Returns
@@ -132,7 +131,7 @@ class ApiHandler:
             return self.respond('Stopped successfully', http_codes.NO_CONTENT)
         return self.respond('Failed to stop', http_codes.CONFLICT)
 
-    def respond(self, message, code=http_codes.OK):
+    def respond(self, message, code=http_codes.OK) -> Response:
         """Log the request and response and send the response back to the caller.
 
         Returns

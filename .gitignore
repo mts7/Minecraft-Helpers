@@ -1,1 +1,6 @@
 /.env
+/build/
+/dist/
+/Minecraft_Helpers.egg-info/
+/.tox/
+/.coverage
