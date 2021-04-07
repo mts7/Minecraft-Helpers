@@ -1,4 +1,4 @@
-colorama
+git+https://github.com/mts7/mts-logger@v0.2.4
 flask
 python-dotenv
 uwsgi

@@ -2,11 +2,11 @@ import inspect
 import json
 import os
 
+import mtslogger
 from api import http_codes
 from dotenv import load_dotenv
 from flask import Response, request
 from minecraft_helpers.server_actions import MinecraftActions
-from mts_utilities import mts_logger
 
 load_dotenv()
 
@@ -32,7 +32,7 @@ minecraft_server = MinecraftActions(**config)
 class ApiHandler:
     def __init__(self, log_level='info'):
         # create the logger
-        self.logger = mts_logger.Logger(mode=log_level, log_file='api.log', output='file')
+        self.logger = mtslogger.get_logger(__name__, mode=log_level, log_file='api.log', output='file')
 
     def check(self) -> Response:
         """Check if the screen is on or off.

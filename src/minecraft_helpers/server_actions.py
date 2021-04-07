@@ -2,7 +2,7 @@ import subprocess
 import time
 from datetime import datetime
 
-from mts_utilities import mts_logger
+import mtslogger
 from mts_utilities.mts_helpers import get_command_path
 from mts_utilities.mts_screen import ScreenActions
 from mts_utilities.mts_status import StatusChecker
@@ -21,7 +21,7 @@ class MinecraftActions:
         if server_options is None:
             server_options = []
         # create the logger
-        self.logger = mts_logger.Logger(log_level)
+        self.logger = mtslogger.get_logger(__name__, mode=log_level)
 
         # set the instance properties from the keyword arguments
         self.ports = ports if len(ports) > 0 else [25565]
