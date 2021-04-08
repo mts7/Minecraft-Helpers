@@ -1,6 +1,6 @@
 import setuptools
 
-VERSION = '0.8.2'
+VERSION = '1.0.2'
 
 setuptools.setup(
     name='Minecraft-Helpers',
