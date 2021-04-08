@@ -1,4 +1,4 @@
-from web import app as application
+from src.web import app as application
 
 if __name__ == '__main__':
     application.run()

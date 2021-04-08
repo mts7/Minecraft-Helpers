@@ -4,8 +4,8 @@ import sys
 
 from dotenv import load_dotenv
 
-import minecraft_helpers.give as give
-from minecraft_helpers.server_actions import MinecraftActions
+import src.minecraft_helpers.give as give
+from src.minecraft_helpers.server_actions import MinecraftActions
 
 load_dotenv()
 

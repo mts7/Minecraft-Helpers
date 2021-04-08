@@ -1,4 +1,5 @@
-from mts_utilities.mts_screen import ScreenActions
+from src.minecraft_helpers.exceptions import EmptyValueException
+from src.mts_utilities.mts_screen import ScreenActions
 
 
 class Give:
@@ -257,11 +258,14 @@ class Give:
     selected_tool = None
     selected_weapon = None
 
-    def __init__(self, screen_name='minecraft'):
+    def __init__(self, screen_name: str = 'minecraft'):
         self.screen_name = screen_name
         self.screen = ScreenActions(screen_name)
 
-    def display_prompt(self, values):
+    def display_prompt(self, values: list):
+        if values is None or values == []:
+            raise EmptyValueException('values')
+
         for index, value in enumerate(values, start=1):
             print('{}: {}'.format(index, value))
 
@@ -316,7 +320,7 @@ class Give:
     def prompt_other(self):
         self.display_prompt(self.extra)
         self.selected_other = self.last_selected
-        print('Selected armor {}'.format(self.selected_other))
+        print('Selected other {}'.format(self.selected_other))
         self.list_enchantments(self.selected_other)
 
     def send_command(self):

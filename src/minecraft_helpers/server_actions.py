@@ -3,9 +3,10 @@ import time
 from datetime import datetime
 
 import mtslogger
-from mts_utilities.mts_helpers import get_command_path
-from mts_utilities.mts_screen import ScreenActions
-from mts_utilities.mts_status import StatusChecker
+
+from src.mts_utilities.mts_helpers import get_command_path
+from src.mts_utilities.mts_screen import ScreenActions
+from src.mts_utilities.mts_status import StatusChecker
 
 
 class MinecraftActions:

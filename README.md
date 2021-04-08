@@ -10,7 +10,7 @@ give. It will soon have the ability to add enchantments to the item, then give t
 ### Usage
 
 ```shell
-python3 src/main.py give
+python3 -m src.main give
 ```
 
 Follow the prompts to see what is available.
@@ -43,7 +43,7 @@ All usages print whatever is returned by the call.
 ---
 
 ```shell
-python3 src/main.py check
+python3 -m src.main check
 ```
 
 Check the screen name for existence.
@@ -53,7 +53,7 @@ This will only do the screen check. Start the screen session with `screen`.
 ---
 
 ```shell
-python3 src/main.py date
+python3 -m src.main date
 ```
 
 Send the current date and time to the players.
@@ -66,7 +66,7 @@ This can be used in a cron job as indicated below.
 ---
 
 ```shell
-python3 src/main.py get
+python3 -m src.main get
 ```
 
 Get the command string for starting the server.
@@ -76,7 +76,7 @@ This compiles the command string (based on the variables and configuration) and 
 ---
 
 ```shell
-python3 src/main.py restart
+python3 -m src.main restart
 ```
 
 Restart the server.
@@ -88,7 +88,7 @@ for `python3 server-actions.py stop && python3 server-actions.py start`.
 ---
 
 ```shell
-python3 src/main.py screen
+python3 -m src.main screen
 ```
 
 Start the screen with the provided name if it is not already started.
@@ -98,7 +98,7 @@ NOTE: This appears to be broken and will need further investigation.
 ---
 
 ```shell
-python3 src/main.py status
+python3 -m src.main status
 ```
 
 Check to see if the server is running.
@@ -110,7 +110,7 @@ It returns a Boolean value.
 ---
 
 ```shell
-python3 src/main.py start
+python3 -m src.main start
 ```
 
 Start the server according to the compiled command string.
@@ -122,7 +122,7 @@ Once the command is sent, the script waits for 50 seconds before returning.
 ---
 
 ```shell
-python3 src/main.py stop
+python3 -m src.main stop
 ```
 
 Stop the server.
@@ -132,7 +132,7 @@ This sends the stop command to the screen, which should stop the server.
 ---
 
 ```shell
-python3 src/main.py verify
+python3 -m src.main verify
 ```
 
 Check to see if the server is running. If the server is not running, start the server.
@@ -140,7 +140,7 @@ Check to see if the server is running. If the server is not running, start the s
 This script is useful for cron jobs to ensure the server is up and running at the desired interval. The line below will
 run the check every fifteen minutes.
 
-`*/15 * * * * python3 src/main.py verify > /dev/null`
+`*/15 * * * * python3 -m src.main verify > /dev/null`
 
 ## Flask API with wsgi
 
@@ -149,7 +149,7 @@ The API works pretty much like the CLI, even with the same commands (endpoints).
 ### Usage
 
 ```shell
-python3 src/wsgi.py
+python3 m src.wsgi
 ```
 
 Get the status of the server.
@@ -170,6 +170,14 @@ http://127.0.0.1:5000/api/status
 * /api/stop
 
 Each of the above routes executes the provided command and does not take any arguments.
+
+## Testing
+
+The below command will execute the tests and display a code coverage report.
+
+```shell
+coverage run -m pytest && coverage report
+```
 
 ## TODO
 

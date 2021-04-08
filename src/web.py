@@ -4,8 +4,8 @@ from functools import wraps
 from dotenv import load_dotenv
 from flask import Flask, Response
 
-import api.handler as handler
-from api import http_codes
+import src.api.handler as handler
+from src.api import http_codes
 
 load_dotenv()
 
