@@ -1,31 +1,13 @@
-import json
 import os
 import sys
 
-from dotenv import load_dotenv
-
 import src.minecraft_helpers.give as give
+from src import config
 from src.minecraft_helpers.server_actions import MinecraftActions
 
-load_dotenv()
-
-# set the name of the screen
-screen_name = os.environ.get('SCREEN_NAME')
-
 # start the giver
-giver = give.Give(screen_name)
+giver = give.Give(os.environ.get('SCREEN_NAME'))
 
-# configure these variables for the Minecraft server
-config = {
-    'java_executable': os.environ.get('JAVA_EXECUTABLE'),
-    'log_level': 'debug' if os.environ.get('ENVIRONMENT') == 'development' else 'warning',
-    'ports': json.loads(os.environ.get('PORTS')),
-    'screen_name': screen_name,
-    'server_file': os.environ.get('SERVER_FILE'),
-    'server_path': os.environ.get('SERVER_PATH'),
-    'stop_timer': os.environ.get('STOP_TIMER'),
-    'server_options': json.loads(os.environ.get('SERVER_OPTIONS'))
-}
 minecraft_server = MinecraftActions(**config)
 
 

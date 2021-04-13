@@ -8,6 +8,8 @@ log_level = 'info'
 
 
 class ScreenActions:
+    """All actions that integrate with `screen`."""
+
     name = ''
 
     def __init__(self, name: str, logger=None):
@@ -30,7 +32,7 @@ class ScreenActions:
         """
         self.logger.info('check')
         command = 'screen -ls | grep ' + self.name + ' | wc -l'
-        self.logger.debug('execute command: ' + command)
+        self.logger.debug(f'execute command: {command}')
         try:
             count = execute(command)
             try:
@@ -39,7 +41,7 @@ class ScreenActions:
                 self.logger.error(str(error))
                 return False
         except subprocess.CalledProcessError as error:
-            self.logger.error(str(error.returncode) + ': ' + error.stdout)
+            self.logger.error(f'{str(error.returncode)}: {error.stdout}')
             return False
 
     def create(self) -> bool:
@@ -67,9 +69,9 @@ class ScreenActions:
 
         self.logger.debug('starting screen')
         try:
-            value = execute('screen -dmS ' + self.name)
+            value = execute(f'screen -dmS {self.name}')
             self.logger.debug('value from execute: ' + value)
-            self.logger.debug('screen ' + self.name + ' should be running')
+            self.logger.debug(f'screen {self.name} should be running')
             return True
         except subprocess.CalledProcessError as error:
             self.logger.error(str(error.returncode) + ': ' + error.stdout)
@@ -97,9 +99,9 @@ class ScreenActions:
             self.logger.warning(f'screen {self.name} does not exist.')
             return False
 
-        self.logger.debug('sending command to screen ' + self.name)
+        self.logger.debug(f'sending command to screen {self.name}')
         try:
             return execute('screen -dR ' + self.name + ' -X stuff "' + command + '"\015')
         except subprocess.CalledProcessError as error:
-            self.logger.error(str(error.returncode) + ': ' + error.stdout)
+            self.logger.error(f'{str(error.returncode)}: {error.stdout}')
             return False

@@ -16,20 +16,44 @@ app.config['DEBUG'] = DEBUG
 apiHandler = handler.ApiHandler('debug' if DEBUG else 'info')
 
 
-def authenticate_user(callback):
+def authenticate_user(callback: callable):
+    """Authenticates the user.
+
+    Parameters
+    ----------
+    callback : callable
+        Function to handle the successful authentication of the user.
+
+    Returns
+    -------
+    callable | Response
+    """
+
     @wraps(callback)
     def wrapper(*args, **kwargs):
         # TODO: add actual authentication with JWT or similar
         auth = DEBUG
         if not auth:
             apiHandler.logger.error('Unauthorized user')
-            return Response('Not Authenticated', http_codes.UNAUTHORIZED, {'WWW-Authenticate': 'Bearer realm="Token"'})
+            return Response('Not Authenticated', http_codes.UNAUTHORIZED,
+                            {'WWW-Authenticate': 'Bearer realm="Token"'})
         return callback(*args, **kwargs)
 
     return wrapper
 
 
-def authenticate_admin(callback):
+def authenticate_admin(callback: callable):
+    """Authenticates an administrator.
+
+    Parameters
+    ----------
+    callback : callable
+
+    Returns
+    -------
+    callable | Response
+    """
+
     @wraps(callback)
     def wrapper(*args, **kwargs):
         # TODO: add actual authentication with JWT or similar
@@ -51,7 +75,18 @@ def authenticate_admin(callback):
 @app.errorhandler(http_codes.BAD_GATEWAY)
 @app.errorhandler(http_codes.SERVICE_UNAVAILABLE)
 @app.errorhandler(http_codes.GATEWAY_TIMEOUT)
-def page_not_found(error):
+def page_not_found(error) -> Response:
+    """Generic error page for all errors
+
+    Parameters
+    ----------
+    error
+
+    Returns
+    -------
+    Response
+    """
+
     apiHandler.logger.error(str(error))
     return Response('What is it you are trying to find?', http_codes.NOT_FOUND)
 
@@ -59,47 +94,95 @@ def page_not_found(error):
 @app.route('/api/check', methods=['GET'])
 @authenticate_user
 def check():
+    """Calls the check method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
     return apiHandler.check()
 
 
 @app.route('/api/date', methods=['POST'])
 @authenticate_user
 def date():
+    """Calls the date method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
     return apiHandler.date()
 
 
 @app.route('/api/command', methods=['GET'])
 @authenticate_admin
 def command():
+    """Calls the command method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
     return apiHandler.command()
 
 
 @app.route('/api/restart', methods=['PUT', 'PATCH'])
 @authenticate_user
 def restart():
+    """Calls the restart method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
     return apiHandler.restart()
 
 
 @app.route('/api/create', methods=['POST'])
 @authenticate_admin
 def create():
+    """Calls the create method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
     return apiHandler.create()
 
 
 @app.route('/api/start', methods=['POST'])
 @authenticate_user
 def start():
+    """Calls the start method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
     return apiHandler.start()
 
 
 @app.route('/api/status', methods=['GET'])
 def status():
+    """Calls the status method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
     return apiHandler.status()
 
 
 @app.route('/api/stop', methods=['DELETE'])
 @authenticate_user
 def stop():
+    """Calls the stop method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
     return apiHandler.stop()
 
 

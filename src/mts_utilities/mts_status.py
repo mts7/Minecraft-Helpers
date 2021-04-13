@@ -4,6 +4,7 @@ from .mts_helpers import execute, get_command_path
 
 
 class StatusChecker:
+    """Checks the current status of a process or port."""
     valid = False
 
     def check(self, command: str):
