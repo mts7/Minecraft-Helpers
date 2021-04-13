@@ -36,7 +36,7 @@ jobs:
           pylint --exit-zero -d C0103,C0114 src
       - name: Test with pytest
         env:
-          PORTS: "'[25565]'"
+          PORTS: "[25565]"
           JAVA_EXECUTABLE: ${{ secrets.JAVA_EXECUTABLE }}
           SCREEN_NAME: ${{ secrets.SCREEN_NAME }}
           SERVER_FILE: ${{ secrets.SERVER_FILE }}

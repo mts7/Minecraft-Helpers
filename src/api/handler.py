@@ -43,7 +43,8 @@ minecraft_server = MinecraftActions(**config)
 class ApiHandler:
     def __init__(self, log_level='info'):
         # create the logger
-        self.logger = mtslogger.get_logger(__name__, mode=log_level, log_file='api.log', output='file')
+        self.logger = mtslogger.get_logger(__name__, mode=log_level,
+                                           log_file='api.log', output='file')
 
     def check(self) -> Response:
         """Check if the screen is on or off.
@@ -87,13 +88,14 @@ class ApiHandler:
         result = minecraft_server.screen.create()
         if result:
             return self.respond('Created screen', http_codes.NO_CONTENT)
-        return self.respond('Failed to create screen', http_codes.SERVICE_UNAVAILABLE)
+        return self.respond('Failed to create screen',
+                            http_codes.SERVICE_UNAVAILABLE)
 
     def restart(self) -> Response:
         """Restart the server.
 
-        This returns the combined results from stop and start. While there might be a failed restart value, the server
-        might actually be running.
+        This returns the combined results from stop and start. While there might
+        be a failed restart value, the server might actually be running.
 
         Returns
         -------
@@ -103,7 +105,8 @@ class ApiHandler:
         result = minecraft_server.restart()
         if result:
             return self.respond('Restarted successfully', http_codes.NO_CONTENT)
-        return self.respond('Failed to restart successfully', http_codes.CONFLICT)
+        return self.respond('Failed to restart successfully',
+                            http_codes.CONFLICT)
 
     def start(self) -> Response:
         """Start the server.
@@ -143,7 +146,8 @@ class ApiHandler:
         return self.respond('Failed to stop', http_codes.CONFLICT)
 
     def respond(self, message, code=http_codes.OK) -> Response:
-        """Log the request and response and send the response back to the caller.
+        """Log the request and response and send the response back to the
+        caller.
 
         Returns
         -------
@@ -163,7 +167,8 @@ class ApiHandler:
             ip = request.remote_addr
 
         # log the response
-        self.logger.info(f'{ip} - {caller}: Sending API Response, {message}, with code {code}.')
+        self.logger.info(f'{ip} - {caller}: Sending API Response, {message}, '
+                         f'with code {code}.')
 
         # return the response with the code
         return Response(message, code)
