@@ -30,7 +30,8 @@ minecraft_server = MinecraftActions(**config)
 
 
 def display_menu():
-    # display the list of available options
+    """Display the available options for the command."""
+
     options = """
 Minecraft server_actions.py by Mike Rodarte (mts7777777)
 @since 1.16.5
@@ -53,7 +54,7 @@ verify      Check to see if the server is running and start if not running.
 
 
 def handle_action(action: str):
-    # determine which function to call
+    """Handle the specified action by calling its corresponding method."""
     switcher = {
         'check': minecraft_server.screen.check,
         'date': minecraft_server.send_date,

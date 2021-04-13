@@ -6,7 +6,7 @@ import pytest
 import src.api.handler as handler
 
 
-@pytest.mark.skipif(os.environ.get('CI'),
+@pytest.mark.skipif(os.environ.get('CI') == 'true',
                     reason='GitHub Actions does not support arrays in config.')
 def test_api_handler_init():
     logger = mtslogger.get_logger(__name__)
