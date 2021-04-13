@@ -44,7 +44,6 @@ jobs:
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
           STOP_TIMER: ${{ secrets.STOP_TIMER }}
         run: |
-          echo "Server File: ${SERVER_FILE}"
           coverage run -m pytest
           coverage report
           coverage json
