@@ -1,6 +1,6 @@
 import setuptools
 
-VERSION = '1.0.2'
+VERSION = '1.0.3'
 
 setuptools.setup(
     name='Minecraft-Helpers',
@@ -19,8 +19,14 @@ setuptools.setup(
         'Programming Language:: Python:: 3.9',
     ],
     python_requires='>=3.7',
+    dependency_links=[
+        'git+https://github.com/mts7/mts-logger@v0.2.4#egg=mts-logger',
+    ],
     install_requires=[
         'flask',
+        'python-dotenv',
         'uwsgi',
+        'pytest',
+        'pytest-mock',
     ],
 )

@@ -149,7 +149,7 @@ The API works pretty much like the CLI, even with the same commands (endpoints).
 ### Usage
 
 ```shell
-python3 m src.wsgi
+python3 -m src.wsgi
 ```
 
 Get the status of the server.

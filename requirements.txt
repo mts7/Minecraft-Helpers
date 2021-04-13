@@ -1,4 +1,4 @@
-git+https://github.com/mts7/mts-logger@v0.2.4
+git+https://github.com/mts7/mts-logger@v0.2.4#egg=mts-logger
 flask
 pytest
 pytest-mock
