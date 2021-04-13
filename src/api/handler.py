@@ -22,6 +22,7 @@ assert type(ports) is str
 ports_length = len(ports)
 print(f'ports length: {ports_length}')
 assert ports_length > 0
+print(f'ports: {ports}')
 json_ports = json.loads(ports)
 assert type(json_ports) is list
 
