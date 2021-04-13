@@ -16,39 +16,45 @@ DEBUG = os.environ.get('ENVIRONMENT') == 'development'
 # set the name of the screen
 screen_name = os.environ.get('SCREEN_NAME')
 
-# handle ports early
-ports = os.environ.get('PORTS')
-assert type(ports) is str
-ports_length = len(ports)
-print(f'ports length: {ports_length}')
-assert ports_length > 0
-print(f'ports: {ports}')
-json_ports = json.loads(ports)
-print('json: ', json_ports)
-print(f'type of json: ', type(json_ports))
-if type(json_ports) is str:
-    json_ports = json.loads(json_ports)
-assert type(json_ports) is list
-
-# configure these variables for the Minecraft server
-config = {
-    'java_executable': os.environ.get('JAVA_EXECUTABLE'),
-    'log_level': 'debug' if DEBUG else 'warning',
-    'ports': json_ports,
-    'screen_name': screen_name,
-    'server_file': os.environ.get('SERVER_FILE'),
-    'server_path': os.environ.get('SERVER_PATH'),
-    'stop_timer': os.environ.get('STOP_TIMER'),
-    'server_options': json.loads(os.environ.get('SERVER_OPTIONS'))
-}
-minecraft_server = MinecraftActions(**config)
-
 
 class ApiHandler:
     def __init__(self, log_level='info'):
         # create the logger
         self.logger = mtslogger.get_logger(__name__, mode=log_level,
                                            log_file='api.log', output='file')
+
+        # handle ports early
+
+        # configure these variables for the Minecraft server
+        config = {
+            'java_executable': os.environ.get('JAVA_EXECUTABLE'),
+            'log_level': 'debug' if DEBUG else 'warning',
+            'ports': self.get_ports(),
+            'screen_name': screen_name,
+            'server_file': os.environ.get('SERVER_FILE'),
+            'server_path': os.environ.get('SERVER_PATH'),
+            'stop_timer': os.environ.get('STOP_TIMER'),
+            'server_options': json.loads(os.environ.get('SERVER_OPTIONS'))
+        }
+
+        self.minecraft_server = MinecraftActions(**config)
+
+    @staticmethod
+    def get_ports() -> list:
+        ports = os.environ.get('PORTS')
+        assert type(ports) is str
+        ports_length = len(ports)
+        print(f'ports length: {ports_length}')
+        assert ports_length > 0
+        print(f'ports: {ports}')
+        json_ports = json.loads(ports)
+        print('json: ', json_ports)
+        print(f'type of json: ', type(json_ports))
+        if type(json_ports) is str:
+            json_ports = json.loads(json_ports)
+        assert type(json_ports) is list
+
+        return json_ports
 
     def check(self) -> Response:
         """Check if the screen is on or off.
@@ -58,7 +64,7 @@ class ApiHandler:
         Response
             The response with the string result and the code.
         """
-        result = minecraft_server.screen.check()
+        result = self.minecraft_server.screen.check()
         return self.respond('on' if result else 'off')
 
     def date(self) -> Response:
@@ -69,7 +75,7 @@ class ApiHandler:
         Response
             The response with the string result and the code.
         """
-        return self.respond(minecraft_server.send_date())
+        return self.respond(self.minecraft_server.send_date())
 
     def command(self) -> Response:
         """Get the server command.
@@ -79,7 +85,7 @@ class ApiHandler:
         Response
             The response with the string result and the code.
         """
-        return self.respond(minecraft_server.get_start_command())
+        return self.respond(self.minecraft_server.get_start_command())
 
     def create(self) -> Response:
         """Create the screen session.
@@ -89,7 +95,7 @@ class ApiHandler:
         Response
             The response with the string result and the code.
         """
-        result = minecraft_server.screen.create()
+        result = self.minecraft_server.screen.create()
         if result:
             return self.respond('Created screen', http_codes.NO_CONTENT)
         return self.respond('Failed to create screen',
@@ -106,7 +112,7 @@ class ApiHandler:
         Response
             The response with the string result and the code.
         """
-        result = minecraft_server.restart()
+        result = self.minecraft_server.restart()
         if result:
             return self.respond('Restarted successfully', http_codes.NO_CONTENT)
         return self.respond('Failed to restart successfully',
@@ -120,7 +126,7 @@ class ApiHandler:
         Response
             The response with the string result and the code.
         """
-        result = minecraft_server.start()
+        result = self.minecraft_server.start()
         if result:
             return self.respond('Started successfully', http_codes.NO_CONTENT)
         return self.respond('Failed to start', http_codes.CONFLICT)
@@ -133,7 +139,7 @@ class ApiHandler:
         Response
             The response with the string result and the code.
         """
-        result = minecraft_server.status()
+        result = self.minecraft_server.status()
         return self.respond('up' if result else 'down')
 
     def stop(self) -> Response:
@@ -144,7 +150,7 @@ class ApiHandler:
         Response
             The response with the string result and the code.
         """
-        result = minecraft_server.stop()
+        result = self.minecraft_server.stop()
         if result:
             return self.respond('Stopped successfully', http_codes.NO_CONTENT)
         return self.respond('Failed to stop', http_codes.CONFLICT)
