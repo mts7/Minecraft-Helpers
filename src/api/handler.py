@@ -3,18 +3,12 @@ import json
 import os
 
 import mtslogger
-from dotenv import load_dotenv
 from flask import Response, request
 
 from src.api import http_codes
 from src.minecraft_helpers.server_actions import MinecraftActions
 
-load_dotenv()
-
 DEBUG = os.environ.get('ENVIRONMENT') == 'development'
-
-# set the name of the screen
-screen_name = os.environ.get('SCREEN_NAME')
 
 
 class ApiHandler:
@@ -23,14 +17,12 @@ class ApiHandler:
         self.logger = mtslogger.get_logger(__name__, mode=log_level,
                                            log_file='api.log', output='file')
 
-        # handle ports early
-
         # configure these variables for the Minecraft server
         config = {
             'java_executable': os.environ.get('JAVA_EXECUTABLE'),
             'log_level': 'debug' if DEBUG else 'warning',
             'ports': self.get_ports(),
-            'screen_name': screen_name,
+            'screen_name': os.environ.get('SCREEN_NAME'),
             'server_file': os.environ.get('SERVER_FILE'),
             'server_path': os.environ.get('SERVER_PATH'),
             'stop_timer': os.environ.get('STOP_TIMER'),
@@ -39,17 +31,16 @@ class ApiHandler:
 
         self.minecraft_server = MinecraftActions(**config)
 
-    @staticmethod
-    def get_ports() -> list:
+    def get_ports(self) -> list:
         ports = os.environ.get('PORTS')
         assert type(ports) is str
         ports_length = len(ports)
-        print(f'ports length: {ports_length}')
+        self.logger.debug(f'ports length: {ports_length}')
         assert ports_length > 0
-        print(f'ports: {ports}')
+        self.logger.debug(f'ports: {ports}')
         json_ports = json.loads(ports)
-        print('json: ', json_ports)
-        print(f'type of json: ', type(json_ports))
+        self.logger.debug('json: ', json_ports)
+        self.logger.debug(f'type of json: ', type(json_ports))
         if type(json_ports) is str:
             json_ports = json.loads(json_ports)
         assert type(json_ports) is list
