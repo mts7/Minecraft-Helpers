@@ -37,7 +37,14 @@ jobs:
       - name: Test with pytest
         env:
           PORTS: ${{ secrets.PORTS }}
+          JAVA_EXECUTABLE: ${{ secrets.JAVA_EXECUTABLE }}
+          SCREEN_NAME: ${{ secrets.SCREEN_NAME }}
+          SERVER_FILE: ${{ secrets.SERVER_FILE }}
+          SERVER_OPTIONS: ${{ secrets.SERVER_OPTIONS }}
+          SERVER_PATH: ${{ secrets.SERVER_PATH }}
+          STOP_TIMER: ${{ secrets.STOP_TIMER }}
         run: |
+          echo "Server File: ${SERVER_FILE}"
           coverage run -m pytest
           coverage report
           coverage json
