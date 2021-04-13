@@ -24,6 +24,7 @@ print(f'ports length: {ports_length}')
 assert ports_length > 0
 print(f'ports: {ports}')
 json_ports = json.loads(ports)
+print('json: ', json_ports)
 assert type(json_ports) is list
 
 # configure these variables for the Minecraft server
