@@ -1,4 +1,4 @@
-name: Python package
+name: Minecraft Helpers
 
 on: [ push ]
 
@@ -45,7 +45,7 @@ jobs:
           STOP_TIMER: ${{ secrets.STOP_TIMER }}
         run: |
           theScreen=$SCREEN_NAME
-          echo "${theScreen} ${#theScreen} == 2"
+          echo "${theScreen} ${#theScreen} == 9"
           coverage run -m pytest
           coverage report
           coverage json
