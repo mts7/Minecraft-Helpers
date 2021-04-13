@@ -17,10 +17,14 @@ DEBUG = os.environ.get('ENVIRONMENT') == 'development'
 screen_name = os.environ.get('SCREEN_NAME')
 
 # configure these variables for the Minecraft server
+ports = os.environ.get('PORTS')
+if ports is None:
+    raise Exception('ports is empty')
+
 config = {
     'java_executable': os.environ.get('JAVA_EXECUTABLE'),
     'log_level': 'debug' if DEBUG else 'warning',
-    'ports': json.loads(os.environ.get('PORTS')),
+    'ports': json.loads(ports),
     'screen_name': screen_name,
     'server_file': os.environ.get('SERVER_FILE'),
     'server_path': os.environ.get('SERVER_PATH'),
