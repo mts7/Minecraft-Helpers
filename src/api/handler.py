@@ -19,7 +19,9 @@ screen_name = os.environ.get('SCREEN_NAME')
 # handle ports early
 ports = os.environ.get('PORTS')
 assert type(ports) is str
-assert len(ports) > 0
+ports_length = len(ports)
+print(f'ports length: {ports_length}')
+assert ports_length > 0
 json_ports = json.loads(ports)
 assert type(json_ports) is list
 
