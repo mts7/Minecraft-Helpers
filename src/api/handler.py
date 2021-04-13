@@ -20,6 +20,8 @@ screen_name = os.environ.get('SCREEN_NAME')
 ports = os.environ.get('PORTS')
 if ports is None:
     raise Exception('ports is empty')
+else:
+    print(ports)
 
 config = {
     'java_executable': os.environ.get('JAVA_EXECUTABLE'),
