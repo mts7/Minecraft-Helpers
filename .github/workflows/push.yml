@@ -4,6 +4,8 @@ on: [ push ]
 
 jobs:
   build:
+    environment:
+      name: standard
 
     runs-on: ubuntu-latest
     strategy:
