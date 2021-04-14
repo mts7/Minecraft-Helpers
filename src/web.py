@@ -13,29 +13,53 @@ app = Flask(__name__)
 
 DEBUG = os.environ.get('ENVIRONMENT') == 'development'
 app.config['DEBUG'] = DEBUG
-apiHandler = handler.ApiHandler('debug' if DEBUG else 'info')
+api_handler = handler.ApiHandler('debug' if DEBUG else 'info')
 
 
-def authenticate_user(callback):
+def authenticate_user(callback: callable):
+    """Authenticate the user.
+
+    Parameters
+    ----------
+    callback : callable
+        Function to handle the successful authentication of the user.
+
+    Returns
+    -------
+    callable | Response
+    """
+
     @wraps(callback)
     def wrapper(*args, **kwargs):
         # TODO: add actual authentication with JWT or similar
         auth = DEBUG
         if not auth:
-            apiHandler.logger.error('Unauthorized user')
-            return Response('Not Authenticated', http_codes.UNAUTHORIZED, {'WWW-Authenticate': 'Bearer realm="Token"'})
+            api_handler.logger.error('Unauthorized user')
+            return Response('Not Authenticated', http_codes.UNAUTHORIZED,
+                            {'WWW-Authenticate': 'Bearer realm="Token"'})
         return callback(*args, **kwargs)
 
     return wrapper
 
 
-def authenticate_admin(callback):
+def authenticate_admin(callback: callable):
+    """Authenticate an administrator.
+
+    Parameters
+    ----------
+    callback : callable
+
+    Returns
+    -------
+    callable | Response
+    """
+
     @wraps(callback)
     def wrapper(*args, **kwargs):
         # TODO: add actual authentication with JWT or similar
         auth = DEBUG
         if not auth:
-            apiHandler.logger.error('Unauthorized admin')
+            api_handler.logger.error('Unauthorized admin')
             return Response('Forbidden', http_codes.FORBIDDEN)
         return callback(*args, **kwargs)
 
@@ -51,56 +75,115 @@ def authenticate_admin(callback):
 @app.errorhandler(http_codes.BAD_GATEWAY)
 @app.errorhandler(http_codes.SERVICE_UNAVAILABLE)
 @app.errorhandler(http_codes.GATEWAY_TIMEOUT)
-def page_not_found(error):
-    apiHandler.logger.error(str(error))
+def page_not_found(error) -> Response:
+    """Display a generic error page for all errors.
+
+    Parameters
+    ----------
+    error
+
+    Returns
+    -------
+    Response
+    """
+
+    api_handler.logger.error(str(error))
     return Response('What is it you are trying to find?', http_codes.NOT_FOUND)
 
 
 @app.route('/api/check', methods=['GET'])
 @authenticate_user
 def check():
-    return apiHandler.check()
+    """Call the check method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
+    return api_handler.check()
 
 
 @app.route('/api/date', methods=['POST'])
 @authenticate_user
 def date():
-    return apiHandler.date()
+    """Call the date method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
+    return api_handler.date()
 
 
 @app.route('/api/command', methods=['GET'])
 @authenticate_admin
 def command():
-    return apiHandler.command()
+    """Call the command method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
+    return api_handler.command()
 
 
 @app.route('/api/restart', methods=['PUT', 'PATCH'])
 @authenticate_user
 def restart():
-    return apiHandler.restart()
+    """Call the restart method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
+    return api_handler.restart()
 
 
 @app.route('/api/create', methods=['POST'])
 @authenticate_admin
 def create():
-    return apiHandler.create()
+    """Call the create method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
+    return api_handler.create()
 
 
 @app.route('/api/start', methods=['POST'])
 @authenticate_user
 def start():
-    return apiHandler.start()
+    """Call the start method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
+    return api_handler.start()
 
 
 @app.route('/api/status', methods=['GET'])
 def status():
-    return apiHandler.status()
+    """Call the status method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
+    return api_handler.status()
 
 
 @app.route('/api/stop', methods=['DELETE'])
 @authenticate_user
 def stop():
-    return apiHandler.stop()
+    """Call the stop method of the API handler.
+
+    Returns
+    -------
+    Response
+    """
+    return api_handler.stop()
 
 
 if __name__ == '__main__':

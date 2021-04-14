@@ -1,8 +1,12 @@
+import sys
+
 from src.minecraft_helpers.exceptions import EmptyValueException
 from src.mts_utilities.mts_screen import ScreenActions
 
 
 class Give:
+    """Generate a string to send to a Minecraft server."""
+
     # set these in the constructor
     screen_name = 'minecraft'
 
@@ -263,6 +267,13 @@ class Give:
         self.screen = ScreenActions(screen_name)
 
     def display_prompt(self, values: list):
+        """Display a prompt with the passed values and sets the input value.
+
+        Parameters
+        ----------
+        values : list
+            Values to display
+        """
         if values is None or values == []:
             raise EmptyValueException('values')
 
@@ -274,9 +285,16 @@ class Give:
             self.last_selected = values[int(value_input) - 1]
         except ValueError:
             print('exiting')
-            exit(0)
+            sys.exit(0)
 
-    def list_enchantments(self, item):
+    def list_enchantments(self, item: str):
+        """List the enchantments in a prompt based on the item passed.
+
+        Parameters
+        ----------
+        item : str
+            Item to enchant
+        """
         show_enchantments = []
         for name in self.enchantments:
             enchantment = self.enchantments[name]
@@ -286,6 +304,7 @@ class Give:
         self.display_prompt(show_enchantments)
 
     def prompt_categories(self):
+        """Display a prompt for categories."""
         self.display_prompt(self.categories)
         self.selected_category = self.last_selected
         print('Selected category {}'.format(self.selected_category))
@@ -300,29 +319,34 @@ class Give:
         func()
 
     def prompt_weapons(self):
+        """Display a prompt for weapons."""
         self.display_prompt(self.weapons)
         self.selected_weapon = self.last_selected
         print('Selected weapon {}'.format(self.selected_weapon))
         self.list_enchantments(self.selected_weapon)
 
     def prompt_armor(self):
+        """Display a prompt for armor."""
         self.display_prompt(self.armor)
         self.selected_armor = self.last_selected
         print('Selected armor {}'.format(self.selected_armor))
         self.list_enchantments(self.selected_armor)
 
     def prompt_tools(self):
+        """Display a prompt for tools."""
         self.display_prompt(self.tools)
         self.selected_tool = self.last_selected
         print('Selected weapon {}'.format(self.selected_tool))
         self.list_enchantments(self.selected_tool)
 
     def prompt_other(self):
+        """Display a prompt for other."""
         self.display_prompt(self.extra)
         self.selected_other = self.last_selected
         print('Selected other {}'.format(self.selected_other))
         self.list_enchantments(self.selected_other)
 
     def send_command(self):
+        """Send the command to the screen instance."""
         # send variables (screen_name, command) to the command string
         self.screen.send(self.command)

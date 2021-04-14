@@ -4,11 +4,12 @@ from .mts_helpers import execute, get_command_path
 
 
 class StatusChecker:
+    """Check the current status of a process or port."""
+
     valid = False
 
     def check(self, command: str):
-        """Execute the given command and return a boolean based on the number of
-        lines returned from the command.
+        """Execute the given command and returns a boolean.
 
         Parameters
         ----------
@@ -49,7 +50,7 @@ class StatusChecker:
         return self.check(f'ps aux | grep {command_name} | grep -v grep')
 
     def port(self, port_numbers: list) -> dict:
-        """Checks for listening ports.
+        """Check for listening ports.
 
         Use netstat to find ports and use grep to find the exact port and if it
         is listening. The command is sent to the check method for verification.
@@ -66,7 +67,9 @@ class StatusChecker:
         """
         output = {}
         for port_number in port_numbers:
-            result = self.check(f'netstat -ane | grep {port_number} | grep LISTEN')
+            result = self.check(
+                f'netstat -ane | grep {port_number} | grep LISTEN'
+            )
             output['port ' + str(port_number)] = result
         return output
 

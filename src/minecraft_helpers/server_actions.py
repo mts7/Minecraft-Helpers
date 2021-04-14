@@ -10,6 +10,8 @@ from src.mts_utilities.mts_status import StatusChecker
 
 
 class MinecraftActions:
+    """Handle actions for the Minecraft server."""
+
     # do not configure below this line
     starting = False
 
@@ -56,8 +58,9 @@ class MinecraftActions:
     def get_start_command(self) -> str:
         """Get the Java server command for starting the server.
 
-        This concatenates the Java executable with the server options and the server
-        file path and name, providing a full command string for starting the server.
+        This concatenates the Java executable with the server options and the
+        server file path and name, providing a full command string for starting
+        the server.
 
         Returns
         -------
@@ -69,19 +72,20 @@ class MinecraftActions:
         try:
             path_java = get_command_path(self.java_executable)
         except subprocess.CalledProcessError as error:
-            self.logger.error(str(error.returncode) + ': ' + error.stdout)
+            self.logger.error(f'{str(error.returncode)}: {error.stdout}')
             return ''
 
-        command = path_java + ' ' + ' '.join(
-            self.server_options) + ' -jar ' + self.server_path + self.server_file + ' nogui'
-        self.logger.debug('command is ' + command)
+        command = path_java + ' ' + ' '.join(self.server_options) + ' -jar ' \
+            + self.server_path + self.server_file + ' nogui'
+        self.logger.debug(f'command is {command}')
         return command
 
     def restart(self) -> bool:
         """Restart the server by calling stop and then start.
 
-        This is an alias for calling both stop and start. Since both stop and start
-        have their own checks, this is safe to call without any other validation.
+        This is an alias for calling both stop and start. Since both stop and
+        start have their own checks, this is safe to call without any other
+        validation.
 
         Returns
         -------
@@ -106,10 +110,10 @@ class MinecraftActions:
     def send_date(self):
         """Send the current date and time to all logged-in players.
 
-        This gets the current date and time, formats it, and sends it to the screen
-        session for all players to see. There is no need to check for the screen
-        session since the final function already handles that, making this safe to
-        call without validation.
+        This gets the current date and time, formats it, and sends it to the
+        screen session for all players to see. There is no need to check for the
+        screen session since the final function already handles that, making
+        this safe to call without validation.
         """
         self.logger.info('send_date')
         message = 'Current time: ' + self.get_date()
@@ -128,8 +132,8 @@ class MinecraftActions:
         message : str
             Message to display to all users currently in the game.
         """
-        self.logger.info('send_message(' + message + ')')
-        result = self.screen.send('say ' + message)
+        self.logger.info(f'send_message({message})')
+        result = self.screen.send(f'say {message}')
         if result is not False:
             self.logger.debug('done sending screen command')
 
@@ -163,31 +167,29 @@ class MinecraftActions:
 
         self.starting = True
 
-        self.logger.debug('changing directory to ' + self.server_path)
-        result = self.screen.send('cd ' + self.server_path)
-        if result is False:
+        try:
+            self.logger.debug(f'changing directory to {self.server_path}')
+            result = self.screen.send(f'cd {self.server_path}')
+            assert result is not False
+
+            command = self.get_start_command()
+            assert command != ''
+
+            result = self.screen.send(command)
+            assert result is not False
+
+            # TODO: poll the screen to determine if the server is done
+            self.logger.debug('waiting for server to load...')
+            # wait for the server and world to load
+            time.sleep(30)
+
+            self.starting = False
+            self.logger.debug('done starting server')
+
+            return True
+        except AssertionError:
             self.starting = False
             return False
-
-        command = self.get_start_command()
-        if command == '':
-            self.starting = False
-            return False
-
-        result = self.screen.send(command)
-        if result is False:
-            self.starting = False
-            return False
-
-        # TODO: poll the screen to determine if the server is done
-        self.logger.debug('waiting for server to load...')
-        # wait for the server and world to load
-        time.sleep(30)
-
-        self.starting = False
-        self.logger.debug('done starting server')
-
-        return True
 
     def status(self) -> bool:
         """Check for the PID of the executable.
@@ -224,10 +226,10 @@ class MinecraftActions:
     def stop(self) -> bool:
         """Stop the Minecraft server.
 
-        This checks to see if the server is already stopped and then continues from
-        there. If necessary, this will send a message to the players about a timer,
-        trigger the auto-save feature, set a timer, and stop the server. This has
-        validation and is safe.
+        This checks to see if the server is already stopped and then continues
+        from there. If necessary, this will send a message to the players about
+        a timer, trigger the auto-save feature, set a timer, and stop the
+        server. This has validation and is safe.
 
         Returns
         -------
@@ -237,19 +239,21 @@ class MinecraftActions:
         self.logger.info('stop')
 
         if self.status() is False:
-            self.logger.warning('server is not running, so it cannot be stopped')
+            self.logger.warning('Server is not running; it cannot be stopped.')
             return False
 
         if self.starting:
             self.logger.warning('server is starting and cannot be stopped')
             return False
 
-        self.send_message('The server is going to be turned off in ' + str(self.stop_timer) + ' seconds')
+        self.send_message(f'The server is going to be turned off in '
+                          f'{str(self.stop_timer)} seconds')
         result = self.screen.send('save-all')
         if result is False:
             return False
 
-        self.logger.debug('waiting for ' + str(self.stop_timer) + ' seconds to give users time to exit')
+        self.logger.debug(f'waiting for {str(self.stop_timer)} seconds '
+                          f'to give users time to exit')
         time.sleep(self.stop_timer)
 
         result = self.screen.send('stop')
@@ -263,9 +267,9 @@ class MinecraftActions:
     def verify(self) -> bool:
         """Check to see if the server is running and not starting.
 
-        The first check is to see if the server is not running. After that, check
-        to see if the server is currently starting. As long as the server is neither
-        running nor starting, start the server.
+        The first check is to see if the server is not running. After that,
+        check to see if the server is currently starting. As long as the server
+        is neither running nor starting, start the server.
 
         Returns
         -------
