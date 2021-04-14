@@ -1,0 +1,8 @@
+[FORMAT]
+max-line-length=80
+
+[LOGGING]
+logging-format-style=fstr
+
+[MESSAGES CONTROL]
+disable=W1202,C0103,C0114,W0511

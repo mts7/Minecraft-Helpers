@@ -11,10 +11,10 @@ DEBUG = os.environ.get('ENVIRONMENT') == 'development'
 
 
 class ApiHandler:
-    """API Handler to route API calls to system calls"""
+    """API Handler to route API calls to system calls."""
 
     def __init__(self, log_level='info'):
-        """Initialize the API Handler class"""
+        """Initialize the API Handler class."""
         # create the logger
         self.logger = mtslogger.get_logger(__name__, mode=log_level,
                                            log_file='api.log', output='file')
@@ -122,8 +122,7 @@ class ApiHandler:
         return self.respond('Failed to stop', http_codes.CONFLICT)
 
     def respond(self, message, code=http_codes.OK) -> Response:
-        """Log the request and response and send the response back to the
-        caller.
+        """Log the request and response and send the response back to caller.
 
         Returns
         -------

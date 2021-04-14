@@ -50,8 +50,8 @@ class ScreenActions:
         Start the screen session, regardless of if there is an existing screen
         session with the same name. This is safe and has proper validation.
 
-        This doesn't seem to be working and returns the error, "No screen session
-        found."
+        This doesn't seem to be working and returns the error, "No screen
+        session found."
 
         Returns
         -------
@@ -70,11 +70,11 @@ class ScreenActions:
         self.logger.debug('starting screen')
         try:
             value = execute(f'screen -dmS {self.name}')
-            self.logger.debug('value from execute: ' + value)
+            self.logger.debug(f'value from execute: {value}')
             self.logger.debug(f'screen {self.name} should be running')
             return True
         except subprocess.CalledProcessError as error:
-            self.logger.error(str(error.returncode) + ': ' + error.stdout)
+            self.logger.error(f'{str(error.returncode)}: {error.stdout}')
             return False
 
     def send(self, command: str):
@@ -94,14 +94,16 @@ class ScreenActions:
         bool|str
             Result of execute or False.
         """
-        self.logger.info('send(' + command + ')')
+        self.logger.info(f'send({command})')
         if self.check() is False:
             self.logger.warning(f'screen {self.name} does not exist.')
             return False
 
         self.logger.debug(f'sending command to screen {self.name}')
         try:
-            return execute('screen -dR ' + self.name + ' -X stuff "' + command + '"\015')
+            return execute(
+                'screen -dR ' + self.name + ' -X stuff "' + command + '"\015'
+            )
         except subprocess.CalledProcessError as error:
             self.logger.error(f'{str(error.returncode)}: {error.stdout}')
             return False

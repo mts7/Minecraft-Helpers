@@ -17,12 +17,13 @@ def execute(command: str):
     str
         The result of the process.
     """
-    result = subprocess.run(command, capture_output=True, check=True, text=True, shell=True).stdout
+    result = subprocess.run(command, capture_output=True, check=True, text=True,
+                            shell=True).stdout
     return result.strip()
 
 
 def get_command_path(command_name: str):
-    """Gets the full path of the executable identified by the command_name.
+    """Get the full path of the executable identified by the command_name.
 
     This only works on operating systems that have the `which` command.
 

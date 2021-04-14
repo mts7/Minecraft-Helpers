@@ -13,7 +13,6 @@ minecraft_server = MinecraftActions(**config)
 
 def display_menu():
     """Display the available options for the command."""
-
     options = """
 Minecraft server_actions.py by Mike Rodarte (mts7777777)
 @since 1.16.5

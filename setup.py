@@ -5,7 +5,8 @@ VERSION = '1.0.3'
 setuptools.setup(
     name='Minecraft-Helpers',
     version=VERSION,
-    description='Minecraft server application handler with start, stop, restart, status, and more.',
+    description='Minecraft server application handler with start, stop, '
+                'restart, status, and more.',
     url='https://github.com/mts7/Minecraft-Helpers',
     author='Mike Rodarte',
     license='MIT License',

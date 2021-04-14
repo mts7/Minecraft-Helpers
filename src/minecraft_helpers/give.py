@@ -5,15 +5,8 @@ from src.mts_utilities.mts_screen import ScreenActions
 
 
 class Give:
-    """Module to generate a string to send to a Minecraft server.
+    """Generate a string to send to a Minecraft server."""
 
-    This goes through a series of prompts to determine which items and
-    enchantments are desired, then displays the give command.
-
-    ```python
-    python3 -m src.give
-    ```
-    """
     # set these in the constructor
     screen_name = 'minecraft'
 
@@ -274,7 +267,7 @@ class Give:
         self.screen = ScreenActions(screen_name)
 
     def display_prompt(self, values: list):
-        """Displays a prompt with the passed values and sets the input value.
+        """Display a prompt with the passed values and sets the input value.
 
         Parameters
         ----------
