@@ -34,7 +34,9 @@ jobs:
       - name: Lint with pylint
         run: |
           pip install pylint==2.4
-          pylint --exit-zero -d C0103,C0114 src
+          pylint --exit-zero src | tee pylint.txt
+          score=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' pylint.txt)
+          echo ./bin/color-text.sh "${score}" 9 7
       - name: Test with pytest
         env:
           PORTS: '"[25565]"'
