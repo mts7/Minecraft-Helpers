@@ -31,14 +31,18 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
           flake8 --count --exit-zero src/ setup.py | tee flake8.txt
-          score=$(tail -n 1 flake8.txt)
-          echo $(./bin/color-maximum.sh "${lines}" 1 20)
+          lines=$(tail -n 1 flake8.txt)
+          echo "${lines}"
+          pwd
+          # echo $(./bin/color-maximum.sh "${lines}" 1 5)
       - name: Lint with pylint
         run: |
           pip install pylint==2.4
           pylint --exit-zero src | tee pylint.txt
           score=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' pylint.txt)
-          echo $(./bin/color-minimum.sh "${score}" 9 7)
+          echo "${score}"
+          pwd
+          # echo $(./bin/color-minimum.sh "${score}" 9 7)
       - name: Test with pytest
         env:
           PORTS: '"[25565]"'
