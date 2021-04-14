@@ -33,7 +33,6 @@ jobs:
           flake8 --count --exit-zero src/ setup.py | tee flake8.txt
           lines=$(tail -n 1 flake8.txt)
           rm flake8.txt
-          echo "${lines}"
           echo $(bin/color-maximum.sh "${lines}" 1 5)
       - name: Lint with pylint
         run: |
@@ -41,11 +40,10 @@ jobs:
           pylint --exit-zero src | tee pylint.txt
           score=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' pylint.txt)
           rm pylint.txt
-          echo "${score}"
           echo $(bin/color-minimum.sh "${score}" 9 7)
       - name: Test with pytest
         env:
-          PORTS: '"[25565]"'
+          PORTS: ${{ secrets.PORTS }}
           JAVA_EXECUTABLE: ${{ secrets.JAVA_EXECUTABLE }}
           SCREEN_NAME: ${{ secrets.SCREEN_NAME }}
           SERVER_FILE: ${{ secrets.SERVER_FILE }}
