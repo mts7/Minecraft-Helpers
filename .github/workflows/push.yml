@@ -59,7 +59,9 @@ jobs:
         run: |
           coverage run -m pytest
           coverage report
-      - name: Deploy to Heroku
-        if: github.ref == 'refs/heads/master'
-        run: |
-          echo 'deploying to Heroku'
+      - uses: akhileshns/heroku-deploy@v3.0.0
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: 'minecraft-helpers'
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: true

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function show_text() {
-  echo -e "\e[${2};30m ${1} \e[0m"
+  echo -e "\e[${2}m ${1} \e[0m"
 }
 
 if [[ "${1}" < "${2}" ]]; then
