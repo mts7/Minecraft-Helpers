@@ -4,7 +4,6 @@ import os
 import mtslogger
 from flask import Response, request
 
-from src import config
 from src.api import http_codes
 from src.minecraft_helpers.server_actions import MinecraftActions
 
@@ -20,6 +19,7 @@ class ApiHandler:
         self.logger = mtslogger.get_logger(__name__, mode=log_level,
                                            log_file='api.log', output='file')
 
+        from src import config
         self.minecraft_server = MinecraftActions(**config)
 
     def check(self) -> Response:
