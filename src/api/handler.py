@@ -35,7 +35,7 @@ class ApiHandler:
         self.minecraft_server = MinecraftActions(**config)
 
     def get_ports(self) -> list:
-        """Get the ports environment variable as JSON
+        """Get the ports environment variable as JSON.
 
         Returns
         -------

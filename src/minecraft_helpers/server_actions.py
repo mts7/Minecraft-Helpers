@@ -76,7 +76,7 @@ class MinecraftActions:
             return ''
 
         command = path_java + ' ' + ' '.join(self.server_options) + ' -jar ' \
-                  + self.server_path + self.server_file + ' nogui'
+            + self.server_path + self.server_file + ' nogui'
         self.logger.debug(f'command is {command}')
         return command
 
