@@ -1,8 +1,8 @@
 FROM python:3.8
-COPY requirements.txt /src/requirements.txt
+COPY requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip
-WORKDIR /src
-RUN pip install -r /src/requirements.txt
-COPY src/ /src/src/
-#COPY .env /src
+WORKDIR /app
+RUN pip install -r /app/requirements.txt
+COPY src/ /app/src/
+#COPY .env /app
 CMD python -m src.web
