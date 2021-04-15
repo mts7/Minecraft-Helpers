@@ -60,6 +60,7 @@ jobs:
           coverage run -m pytest
           coverage report
       - uses: akhileshns/heroku-deploy@v3.0.0
+        if: github.ref == 'refs/heads/mh/heroku'
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: 'minecraft-helpers'

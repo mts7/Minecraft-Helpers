@@ -1,3 +1,4 @@
+import os
 import subprocess
 import time
 from datetime import datetime
@@ -25,6 +26,9 @@ class MinecraftActions:
             server_options = []
         # create the logger
         self.logger = mtslogger.get_logger(__name__, mode=log_level)
+
+        # verify server_file exists
+        assert os.path.exists(f'{server_path}{server_file}')
 
         # set the instance properties from the keyword arguments
         self.ports = ports if len(ports) > 0 else [25565]
